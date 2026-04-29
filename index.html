@@ -1,1 +1,517 @@
 
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --p:#0B3A5A;--s:#D9A441;--bg:#F7F9FB;--sur:#fff;--t1:#0B3A5A;--t2:#4A5B6C;--acc:#0E6B66;
+    --rad:14px;--font:'DM Sans',sans-serif;
+  }
+  .app{width:100%;max-width:390px;margin:0 auto;background:var(--bg);min-height:700px;border-radius:20px;overflow:hidden;border:0.5px solid var(--color-border-tertiary);font-family:var(--font);position:relative;}
+  .status-bar{background:var(--p);color:#fff;padding:10px 20px 6px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:500;}
+  .header{background:var(--p);color:#fff;padding:12px 20px 16px;position:relative;}
+  .header h1{font-family:'Fraunces',serif;font-size:22px;font-weight:300;letter-spacing:-0.5px;opacity:0.95;}
+  .header .sub{font-size:12px;opacity:0.6;margin-top:2px;}
+  .month-strip{display:flex;gap:8px;overflow-x:auto;padding:14px 20px;background:var(--sur);border-bottom:0.5px solid var(--color-border-tertiary);scrollbar-width:none;}
+  .month-strip::-webkit-scrollbar{display:none}
+  .day-chip{min-width:44px;height:58px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;flex-shrink:0;}
+  .day-chip .wd{font-size:10px;font-weight:500;opacity:0.55;text-transform:uppercase;letter-spacing:0.5px;color:var(--t2);}
+  .day-chip .dd{font-size:17px;font-weight:500;color:var(--t1);margin-top:2px;}
+  .day-chip.active{background:var(--p);.wd{color:rgba(255,255,255,0.7)!important}.dd{color:#fff!important}}
+  .day-chip.active .wd,.day-chip.active .dd{color:#fff!important;}
+  .day-chip.has-dot::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--acc);margin-top:4px;display:block;}
+  .timeline{padding:0 20px 100px;overflow-y:auto;max-height:480px;}
+  .timeline::-webkit-scrollbar{display:none}
+  .time-row{display:flex;gap:12px;margin-bottom:4px;align-items:flex-start;min-height:36px;}
+  .time-label{font-size:10px;color:var(--t2);min-width:36px;padding-top:10px;opacity:0.6;}
+  .time-line{flex:1;border-top:0.5px solid var(--color-border-tertiary);margin-top:14px;}
+  .event-block{border-radius:10px;padding:8px 12px;margin-bottom:4px;cursor:pointer;transition:all 0.15s;position:relative;}
+  .event-block:hover{filter:brightness(0.95);}
+  .event-block .et{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;opacity:0.7;margin-bottom:2px;}
+  .event-block .en{font-size:14px;font-weight:500;}
+  .event-block .em{font-size:11px;opacity:0.7;margin-top:2px;}
+  .ev-mine{background:color-mix(in srgb,var(--p) 12%,var(--bg));border-left:3px solid var(--p);}
+  .ev-partner{background:color-mix(in srgb,var(--s) 15%,var(--bg));border-left:3px solid var(--s);}
+  .ev-shared{background:color-mix(in srgb,var(--acc) 12%,var(--bg));border-left:3px solid var(--acc);}
+  .ev-mine .en,.ev-mine .et{color:var(--p);}
+  .ev-partner .en,.ev-partner .et{color:color-mix(in srgb,var(--s) 70%,#444);}
+  .ev-shared .en,.ev-shared .et{color:var(--acc);}
+  .free-slot{border:1.5px dashed color-mix(in srgb,var(--acc) 35%,transparent);border-radius:10px;padding:8px 12px;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+  .free-slot svg{flex-shrink:0;}
+  .free-slot .fs-text{font-size:12px;color:var(--acc);font-weight:500;}
+  .bottom-nav{position:sticky;bottom:0;background:var(--sur);border-top:0.5px solid var(--color-border-tertiary);display:flex;padding:8px 0 12px;}
+  .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;border-radius:10px;transition:all 0.15s;}
+  .nav-btn .nav-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;}
+  .nav-btn .nav-label{font-size:10px;font-weight:500;color:var(--t2);opacity:0.6;}
+  .nav-btn.active .nav-label{color:var(--p);opacity:1;font-weight:600;}
+  .fab{position:absolute;bottom:72px;right:16px;width:50px;height:50px;border-radius:16px;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:24px;font-weight:300;box-shadow:0 4px 16px color-mix(in srgb,var(--p) 30%,transparent);transition:all 0.2s;z-index:10;}
+  .fab:hover{transform:scale(1.05);}
+  .screen{display:none;}
+  .screen.active{display:block;}
+  .availability-card{background:var(--sur);border-radius:var(--rad);border:0.5px solid var(--color-border-tertiary);padding:16px;margin:12px 20px;}
+  .avail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .avail-title{font-size:14px;font-weight:600;color:var(--t1);}
+  .avail-badge{background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;}
+  .avail-row{display:flex;gap:3px;margin-bottom:8px;}
+  .avail-seg{height:20px;border-radius:4px;flex:1;transition:all 0.2s;}
+  .avail-seg.free{background:color-mix(in srgb,var(--acc) 20%,transparent);border:0.5px solid color-mix(in srgb,var(--acc) 40%,transparent);}
+  .avail-seg.busy-me{background:color-mix(in srgb,var(--p) 20%,transparent);}
+  .avail-seg.busy-both{background:color-mix(in srgb,#e55 15%,transparent);}
+  .avail-seg.busy-partner{background:color-mix(in srgb,var(--s) 30%,transparent);}
+  .avail-legend{display:flex;gap:12px;flex-wrap:wrap;}
+  .leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2);}
+  .leg-dot{width:8px;height:8px;border-radius:2px;}
+  .partner-card{background:var(--sur);border-radius:var(--rad);border:0.5px solid var(--color-border-tertiary);margin:12px 20px;overflow:hidden;}
+  .partner-banner{background:linear-gradient(135deg,color-mix(in srgb,var(--s) 15%,var(--bg)),color-mix(in srgb,var(--s) 5%,var(--bg)));padding:16px;display:flex;align-items:center;gap:12px;}
+  .avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;}
+  .partner-banner .avatar{background:var(--s);color:var(--sur);}
+  .partner-info .name{font-size:15px;font-weight:600;color:var(--t1);}
+  .partner-info .status{font-size:11px;color:var(--t2);margin-top:2px;}
+  .online-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:4px;}
+  .partner-events{padding:12px 16px;}
+  .small-event{padding:8px;border-radius:8px;margin-bottom:6px;font-size:12px;}
+  .shared-list{padding:0 20px 100px;}
+  .shared-event-card{background:var(--sur);border-radius:var(--rad);border:0.5px solid var(--color-border-tertiary);padding:14px;margin-bottom:10px;cursor:pointer;transition:all 0.15s;}
+  .shared-event-card:hover{border-color:var(--acc);}
+  .sec-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+  .sec-title{font-size:15px;font-weight:600;color:var(--t1);}
+  .sec-tag{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;padding:3px 7px;border-radius:5px;}
+  .tag-date-night{background:color-mix(in srgb,var(--acc) 15%,transparent);color:var(--acc);}
+  .tag-family{background:color-mix(in srgb,var(--p) 12%,transparent);color:var(--p);}
+  .tag-errand{background:color-mix(in srgb,var(--s) 20%,transparent);color:color-mix(in srgb,var(--s) 70%,#333);}
+  .sec-time{font-size:12px;color:var(--t2);margin-top:2px;}
+  .sec-desc{font-size:12px;color:var(--t2);margin-top:4px;line-height:1.4;}
+  .sec-avatars{display:flex;gap:-4px;margin-top:8px;}
+  .mini-avatar{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;border:1.5px solid var(--sur);}
+  .settings-list{padding:12px 20px 100px;}
+  .settings-section{margin-bottom:20px;}
+  .settings-section h3{font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;}
+  .settings-row{background:var(--sur);border-radius:var(--rad);border:0.5px solid var(--color-border-tertiary);padding:14px;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+  .settings-row .sr-left{display:flex;align-items:center;gap:12px;}
+  .settings-row .sr-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .settings-row .sr-text{font-size:14px;font-weight:500;color:var(--t1);}
+  .settings-row .sr-sub{font-size:11px;color:var(--t2);margin-top:1px;}
+  .settings-row .sr-right{font-size:12px;color:var(--t2);display:flex;align-items:center;gap:4px;}
+  .theme-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+  .theme-chip{border-radius:12px;padding:12px;cursor:pointer;border:2px solid transparent;transition:all 0.15s;position:relative;}
+  .theme-chip.selected{border-color:var(--p);}
+  .theme-chip .tc-name{font-size:12px;font-weight:600;margin-top:6px;color:var(--t1);}
+  .theme-chip .tc-swatch{display:flex;gap:4px;margin-bottom:4px;}
+  .theme-chip .sw{width:16px;height:16px;border-radius:4px;}
+  .theme-chip .tc-sub{font-size:10px;color:var(--t2);}
+  .check-badge{position:absolute;top:6px;right:6px;width:16px;height:16px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;}
+  .together-header{padding:12px 20px 4px;}
+  .together-title{font-size:13px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:8px;}
+  .suggestion-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+  .suggestion-row::-webkit-scrollbar{display:none}
+  .suggest-chip{background:var(--sur);border:0.5px solid var(--color-border-tertiary);border-radius:12px;padding:10px 14px;min-width:130px;flex-shrink:0;cursor:pointer;}
+  .suggest-chip:hover{border-color:var(--acc);}
+  .suggest-chip .sc-time{font-size:11px;font-weight:600;color:var(--acc);}
+  .suggest-chip .sc-label{font-size:12px;color:var(--t1);margin-top:2px;font-weight:500;}
+  .suggest-chip .sc-sub{font-size:10px;color:var(--t2);margin-top:1px;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:flex;align-items:flex-end;z-index:100;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+  .modal-overlay.open{opacity:1;pointer-events:all;}
+  .modal-sheet{background:var(--bg);border-radius:20px 20px 0 0;padding:20px;width:100%;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);}
+  .modal-overlay.open .modal-sheet{transform:translateY(0);}
+  .modal-handle{width:36px;height:4px;background:var(--color-border-tertiary);border-radius:2px;margin:0 auto 16px;}
+  .modal-title{font-size:17px;font-weight:600;color:var(--t1);margin-bottom:16px;}
+  .form-field{margin-bottom:14px;}
+  .form-field label{font-size:12px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;}
+  .form-field input,.form-field textarea,.form-field select{width:100%;background:var(--sur);border:0.5px solid var(--color-border-tertiary);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--t1);font-family:var(--font);outline:none;}
+  .form-field input:focus,.form-field textarea:focus{border-color:var(--acc);}
+  .tag-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .tag-btn{padding:5px 12px;border-radius:7px;font-size:12px;font-weight:500;border:1px solid var(--color-border-tertiary);background:var(--sur);color:var(--t2);cursor:pointer;transition:all 0.1s;}
+  .tag-btn.active{background:color-mix(in srgb,var(--acc) 12%,transparent);border-color:var(--acc);color:var(--acc);}
+  .btn-primary{width:100%;padding:13px;background:var(--p);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all 0.15s;margin-top:6px;}
+  .btn-primary:hover{opacity:0.9;}
+  .sync-badge{display:inline-flex;align-items:center;gap:4px;background:color-mix(in srgb,#22c55e 12%,transparent);color:#16a34a;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:600;}
+  .section-header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px 6px;}
+  .section-header h2{font-size:16px;font-weight:600;color:var(--t1);}
+  .section-header .see-all{font-size:12px;color:var(--acc);font-weight:500;cursor:pointer;}
+</style>
+
+<h2 class="sr-only">SyncSpace — a shared calendar app prototype for couples, showing Today, Partner, Together, Events, and Settings screens.</h2>
+
+<div class="app" id="app">
+  <div class="status-bar">
+    <span style="font-size:13px;font-weight:600;">9:41</span>
+    <div style="display:flex;align-items:center;gap:6px">
+      <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1" fill="rgba(255,255,255,0.9)"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="rgba(255,255,255,0.9)"/><rect x="9" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,0.9)"/><rect x="13.5" y="0" width="2.5" height="12" rx="1" fill="rgba(255,255,255,0.4)"/></svg>
+      <svg width="16" height="12" viewBox="0 0 20 14"><path d="M10 3C6.5 3 3.5 4.5 1.5 7L0 5.5C2.5 2.5 6 1 10 1s7.5 1.5 10 4.5L18.5 7C16.5 4.5 13.5 3 10 3z" fill="rgba(255,255,255,0.9)"/><path d="M10 7c-2 0-3.8.8-5.1 2.1L3.5 7.8C5.2 6.1 7.5 5 10 5s4.8 1.1 6.5 2.8L15.1 9.1C13.8 7.8 12 7 10 7z" fill="rgba(255,255,255,0.9)"/><circle cx="10" cy="12" r="2" fill="rgba(255,255,255,0.9)"/></svg>
+      <svg width="26" height="12" viewBox="0 0 26 12"><rect x="0" y="1" width="23" height="10" rx="2" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1"/><rect x="24" y="4" width="2" height="4" rx="1" fill="rgba(255,255,255,0.5)"/><rect x="1.5" y="2.5" width="17" height="7" rx="1.5" fill="rgba(255,255,255,0.9)"/></svg>
+    </div>
+  </div>
+
+  <div class="header">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <h1>SyncSpace</h1>
+        <div class="sub">Wednesday, April 29</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="sync-badge">
+          <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="#22c55e"/></svg>
+          Synced
+        </div>
+        <div class="avatar" style="background:rgba(255,255,255,0.2);color:#fff;width:36px;height:36px;font-size:13px;">JA</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen active" id="screen-today">
+    <div class="month-strip" id="month-strip"></div>
+    <div class="timeline" id="timeline"></div>
+  </div>
+
+  <div class="screen" id="screen-partner">
+    <div class="partner-card">
+      <div class="partner-banner">
+        <div class="avatar" style="background:var(--s);color:var(--sur);width:44px;height:44px;font-size:16px;">SA</div>
+        <div class="partner-info">
+          <div class="name">Sam Archer</div>
+          <div class="status"><span class="online-dot"></span>Last seen just now</div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-size:11px;color:var(--t2);">Today</div>
+          <div style="font-size:13px;font-weight:600;color:var(--t1);">3 events</div>
+        </div>
+      </div>
+      <div class="partner-events">
+        <div style="font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;">Sam's Schedule</div>
+        <div class="small-event ev-partner">
+          <div style="font-size:11px;font-weight:600;color:color-mix(in srgb,var(--s) 70%,#444);">8:00 – 9:00 AM</div>
+          <div style="font-size:13px;font-weight:500;color:var(--t1);">Morning Standup</div>
+        </div>
+        <div class="small-event ev-partner">
+          <div style="font-size:11px;font-weight:600;color:color-mix(in srgb,var(--s) 70%,#444);">1:00 – 2:30 PM</div>
+          <div style="font-size:13px;font-weight:500;color:var(--t1);">Client Review</div>
+        </div>
+        <div class="small-event ev-partner">
+          <div style="font-size:11px;font-weight:600;color:color-mix(in srgb,var(--s) 70%,#444);">4:00 – 5:00 PM</div>
+          <div style="font-size:13px;font-weight:500;color:var(--t1);">1:1 with Manager</div>
+        </div>
+        <div style="background:color-mix(in srgb,var(--acc) 8%,transparent);border-radius:10px;padding:10px 12px;margin-top:8px;border:0.5px dashed color-mix(in srgb,var(--acc) 35%,transparent)">
+          <div style="font-size:11px;font-weight:600;color:var(--acc);">Free windows today</div>
+          <div style="font-size:12px;color:var(--t2);margin-top:2px;">9:00 AM – 1:00 PM · 2:30 PM – 4:00 PM · After 5:00 PM</div>
+        </div>
+      </div>
+    </div>
+    <div class="availability-card">
+      <div class="avail-header">
+        <div class="avail-title">Weekly availability overlap</div>
+        <div class="avail-badge">18 hrs free</div>
+      </div>
+      <div style="font-size:10px;color:var(--t2);margin-bottom:6px;display:flex;justify-content:space-between"><span>6am</span><span>12pm</span><span>6pm</span><span>10pm</span></div>
+      <div id="avail-chart"></div>
+      <div class="avail-legend" style="margin-top:10px">
+        <div class="leg-item"><div class="leg-dot" style="background:color-mix(in srgb,var(--acc) 30%,transparent);border:0.5px solid var(--acc)"></div>Both free</div>
+        <div class="leg-item"><div class="leg-dot" style="background:color-mix(in srgb,var(--p) 25%,transparent)"></div>You busy</div>
+        <div class="leg-item"><div class="leg-dot" style="background:color-mix(in srgb,var(--s) 35%,transparent)"></div>Sam busy</div>
+        <div class="leg-item"><div class="leg-dot" style="background:color-mix(in srgb,#e55 20%,transparent)"></div>Both busy</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-together">
+    <div class="together-header">
+      <div class="together-title">Smart suggestions</div>
+      <div class="suggestion-row" id="suggestions"></div>
+    </div>
+    <div class="section-header">
+      <h2>Merged timeline</h2>
+      <span class="see-all">Filter</span>
+    </div>
+    <div class="timeline" style="max-height:440px" id="together-timeline"></div>
+  </div>
+
+  <div class="screen" id="screen-events">
+    <div class="section-header">
+      <h2>Shared events</h2>
+      <span class="see-all" id="add-event-btn">+ New</span>
+    </div>
+    <div class="shared-list" id="shared-list"></div>
+  </div>
+
+  <div class="screen" id="screen-settings">
+    <div class="settings-list">
+      <div class="settings-section">
+        <h3>Account</h3>
+        <div class="settings-row">
+          <div class="sr-left">
+            <div class="sr-icon" style="background:color-mix(in srgb,var(--p) 12%,transparent)">👤</div>
+            <div><div class="sr-text">Jordan Archer</div><div class="sr-sub">jordan@email.com</div></div>
+          </div>
+          <div class="sr-right">→</div>
+        </div>
+        <div class="settings-row">
+          <div class="sr-left">
+            <div class="sr-icon" style="background:color-mix(in srgb,var(--s) 20%,transparent)">🔗</div>
+            <div><div class="sr-text">Partner link</div><div class="sr-sub">Linked with Sam Archer</div></div>
+          </div>
+          <div class="sr-right"><span style="color:#22c55e;font-weight:600">●</span> Active</div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>Calendar sync</h3>
+        <div class="settings-row">
+          <div class="sr-left">
+            <div class="sr-icon" style="background:#e8f0fe">
+              <svg width="18" height="18" viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="14" rx="2" fill="#4285F4"/><rect x="2" y="4" width="16" height="5" rx="0" fill="#EA4335"/><rect x="2" y="4" width="16" height="5" rx="2" fill="#EA4335"/><rect x="2" y="7" width="16" height="2" fill="#EA4335"/></svg>
+            </div>
+            <div><div class="sr-text">Google Calendar</div><div class="sr-sub">jordan@gmail.com</div></div>
+          </div>
+          <div class="sr-right"><span style="color:#22c55e">✔ Synced</span></div>
+        </div>
+        <div class="settings-row">
+          <div class="sr-left">
+            <div class="sr-icon" style="background:#e8f4fd">
+              <svg width="18" height="18" viewBox="0 0 20 20"><rect x="2" y="2" width="16" height="16" rx="3" fill="#0078D4"/><text x="10" y="13" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Ol</text></svg>
+            </div>
+            <div><div class="sr-text">Outlook</div><div class="sr-sub">Not connected</div></div>
+          </div>
+          <div class="sr-right" style="color:var(--acc)">Connect →</div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>Appearance</h3>
+        <div style="background:var(--sur);border-radius:var(--rad);border:0.5px solid var(--color-border-tertiary);padding:14px">
+          <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:10px">Theme</div>
+          <div class="theme-grid" id="theme-grid"></div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>Notifications</h3>
+        <div class="settings-row">
+          <div class="sr-left">
+            <div class="sr-icon" style="background:color-mix(in srgb,var(--acc) 12%,transparent)">🔔</div>
+            <div><div class="sr-text">Event reminders</div><div class="sr-sub">30 min before</div></div>
+          </div>
+          <div class="sr-right">→</div>
+        </div>
+        <div class="settings-row">
+          <div class="sr-left">
+            <div class="sr-icon" style="background:color-mix(in srgb,var(--s) 18%,transparent)">📅</div>
+            <div><div class="sr-text">Daily summary</div><div class="sr-sub">Every morning at 7:30 AM</div></div>
+          </div>
+          <div class="sr-right">→</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fab" id="fab">+</div>
+
+  <div class="bottom-nav" id="bottom-nav"></div>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">New shared event</div>
+    <div class="form-field">
+      <label>Title</label>
+      <input type="text" placeholder="e.g. Date night at Valentino's" id="evt-title">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="form-field">
+        <label>Date</label>
+        <input type="date" id="evt-date" value="2026-04-30">
+      </div>
+      <div class="form-field">
+        <label>Time</label>
+        <input type="time" id="evt-time" value="19:00">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Notes</label>
+      <textarea rows="2" placeholder="Optional notes..." id="evt-notes" style="resize:none"></textarea>
+    </div>
+    <div class="form-field">
+      <label>Tag</label>
+      <div class="tag-row" id="tag-row"></div>
+    </div>
+    <button class="btn-primary" id="save-event">Save shared event</button>
+    <button style="width:100%;padding:12px;background:none;border:none;color:var(--t2);font-size:14px;cursor:pointer;margin-top:6px;font-family:var(--font)" id="cancel-modal">Cancel</button>
+  </div>
+</div>
+
+<script>
+const themes={
+  A:{name:"Professional",sub:"CAP-inspired",p:"#0B3A5A",s:"#D9A441",bg:"#F7F9FB",sur:"#fff",t1:"#0B3A5A",t2:"#4A5B6C",acc:"#0E6B66"},
+  B:{name:"Couple-friendly",sub:"Warm & approachable",p:"#c45",s:"#FFD3B6",bg:"#FFF8F5",sur:"#fff",t1:"#4A4A4A",t2:"#7A7A7A",acc:"#3a9fd8"},
+  C:{name:"Productivity",sub:"Bold & fast",p:"#0052CC",s:"#36B37E",bg:"#F4F5F7",sur:"#fff",t1:"#172B4D",t2:"#6B778C",acc:"#FF5630"},
+  D:{name:"Dark mode",sub:"Elegant",p:"#1E88E5",s:"#90CAF9",bg:"#121212",sur:"#1E1E1E",t1:"#FFFFFF",t2:"#B0BEC5",acc:"#FFAB40"}
+};
+const themeSwatches={A:["#0B3A5A","#D9A441","#0E6B66"],B:["#c45","#FFD3B6","#3a9fd8"],C:["#0052CC","#36B37E","#FF5630"],D:["#1E88E5","#90CAF9","#FFAB40"]};
+let activeTheme="A";
+
+function applyTheme(k){
+  activeTheme=k;
+  const t=themes[k];
+  const r=document.getElementById("app").style;
+  r.setProperty("--p",t.p);r.setProperty("--s",t.s);r.setProperty("--bg",t.bg);
+  r.setProperty("--sur",t.sur);r.setProperty("--t1",t.t1);r.setProperty("--t2",t.t2);r.setProperty("--acc",t.acc);
+  renderThemeGrid();
+}
+
+const days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const dates=[26,27,28,29,30,1,2];
+const hasDot=[false,true,false,true,true,false,true];
+function renderStrip(){
+  const el=document.getElementById("month-strip");
+  el.innerHTML=dates.map((d,i)=>`<div class="day-chip${i===3?" active":""}${hasDot[i]?" has-dot":""}" onclick="selectDay(${i})">
+    <span class="wd">${days[(i+3)%7]}</span><span class="dd">${d}</span></div>`).join("");
+}
+function selectDay(i){
+  document.querySelectorAll(".day-chip").forEach((c,j)=>{c.className=c.className.replace(" active","");if(j===i)c.className+=" active";});
+}
+
+const todayEvents=[
+  {time:"8:00",dur:"1h",type:"mine",title:"Sprint Planning",sub:"Engineering team"},
+  {time:"9:30",dur:"30m",type:"free",title:"You're both free · 1.5 hrs"},
+  {time:"10:00",dur:"2h",type:"partner",title:"Sam: Client Workshop",sub:"Remote – Zoom"},
+  {time:"12:00",dur:"45m",type:"shared",title:"Lunch together",sub:"The Corner Café",tag:"date night"},
+  {time:"1:30",dur:"1h",type:"mine",title:"Code Review",sub:"PR #142 & #145"},
+  {time:"3:00",dur:"1.5h",type:"free",title:"You're both free · 2.5 hrs"},
+  {time:"4:30",dur:"1h",type:"partner",title:"Sam: 1:1 w/ Manager",sub:"Read only"},
+  {time:"7:00",dur:"2h",type:"shared",title:"Movie night",sub:"Home",tag:"date night"},
+];
+function renderTimeline(events,elId){
+  const el=document.getElementById(elId);
+  el.innerHTML=events.map(ev=>{
+    if(ev.type==="free") return `<div class="free-slot"><svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="var(--acc)" stroke-width="1.5"/><path d="M7 4v3l2 2" stroke="var(--acc)" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg><div><div class="fs-text">${ev.title}</div></div></div>`;
+    const cls=ev.type==="mine"?"ev-mine":ev.type==="partner"?"ev-partner":"ev-shared";
+    const lbl=ev.type==="mine"?"You":ev.type==="partner"?"Sam":"Shared";
+    return `<div class="event-block ${cls}" onclick="showEventDetail('${ev.title}')">
+      <div class="et">${lbl} · ${ev.time} (${ev.dur})</div>
+      <div class="en">${ev.title}</div>
+      ${ev.sub?`<div class="em">${ev.sub}</div>`:""}
+      ${ev.tag?`<div style="margin-top:4px"><span class="sec-tag tag-date-night">${ev.tag}</span></div>`:""}
+    </div>`;
+  }).join("");
+}
+
+const availPatterns=[
+  ["busy-both","busy-partner","free","free","free","busy-me","busy-me","busy-both"],
+  ["free","free","busy-me","busy-me","free","free","busy-partner","busy-both"],
+  ["busy-me","free","free","busy-both","busy-partner","free","free","free"],
+  ["free","busy-partner","free","free","busy-me","busy-me","free","busy-both"],
+  ["busy-both","busy-both","free","free","free","free","free","free"],
+];
+const wdays=["Mon","Tue","Wed","Thu","Fri"];
+function renderAvail(){
+  const el=document.getElementById("avail-chart");
+  el.innerHTML=wdays.map((d,i)=>`<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+    <span style="font-size:10px;color:var(--t2);min-width:24px">${d}</span>
+    <div style="flex:1;display:flex;gap:2px">${availPatterns[i].map(c=>`<div class="avail-seg ${c}" style="flex:1"></div>`).join("")}</div>
+  </div>`).join("");
+}
+
+const suggestions=[
+  {time:"Sat 6–8pm",label:"Date night window",sub:"Both free · 2 hrs"},
+  {time:"Sun 10–12pm",label:"Brunch together",sub:"Both free · 2 hrs"},
+  {time:"Fri 5–7pm",label:"Errand run",sub:"Both free · 2 hrs"},
+  {time:"Wed 12–1pm",label:"Lunch break",sub:"You free · Sam maybe"},
+];
+function renderSuggestions(){
+  const el=document.getElementById("suggestions");
+  el.innerHTML=suggestions.map(s=>`<div class="suggest-chip" onclick="suggestTapped('${s.label}')">
+    <div class="sc-time">${s.time}</div>
+    <div class="sc-label">${s.label}</div>
+    <div class="sc-sub">${s.sub}</div>
+  </div>`).join("");
+}
+function suggestTapped(lbl){sendPrompt("Tell me more about planning: "+lbl);}
+
+const togetherEvents=[
+  {time:"8:00",dur:"1h",type:"mine",title:"Sprint Planning",sub:"Engineering team"},
+  {time:"10:00",dur:"2h",type:"partner",title:"Sam: Client Workshop",sub:"Remote"},
+  {time:"12:00",dur:"45m",type:"shared",title:"Lunch together",sub:"The Corner Café",tag:"date night"},
+  {time:"1:30",dur:"1h",type:"mine",title:"Code Review",sub:"PR #142"},
+  {time:"4:30",dur:"1h",type:"partner",title:"Sam: 1:1 w/ Manager",sub:"Read only"},
+  {time:"7:00",dur:"2h",type:"shared",title:"Movie night",sub:"Home",tag:"date night"},
+];
+
+const sharedEvents=[
+  {id:1,title:"Movie night",tag:"date night",tagClass:"tag-date-night",date:"Wed Apr 29",time:"7:00 PM",desc:"Stay in, popcorn, the new Dune sequel"},
+  {id:2,title:"Grocery run",tag:"errand",tagClass:"tag-errand",date:"Thu Apr 30",time:"10:00 AM",desc:"Costco + Trader Joe's. Bring the list."},
+  {id:3,title:"Mom's birthday dinner",tag:"family",tagClass:"tag-family",date:"Sat May 1",time:"6:30 PM",desc:"Reservation at Via Napoli. 6 people."},
+  {id:4,title:"Saturday hike",tag:"date night",tagClass:"tag-date-night",date:"Sun May 2",time:"8:00 AM",desc:"Angels Landing trail. Bring extra water."},
+];
+function renderShared(){
+  const el=document.getElementById("shared-list");
+  el.innerHTML=sharedEvents.map(e=>`<div class="shared-event-card">
+    <div class="sec-top">
+      <div class="sec-title">${e.title}</div>
+      <span class="sec-tag ${e.tagClass}">${e.tag}</span>
+    </div>
+    <div class="sec-time">${e.date} · ${e.time}</div>
+    <div class="sec-desc">${e.desc}</div>
+    <div class="sec-avatars" style="margin-top:8px;display:flex;gap:-4px">
+      <div class="mini-avatar" style="background:color-mix(in srgb,var(--p) 15%,transparent);color:var(--p)">JA</div>
+      <div class="mini-avatar" style="background:color-mix(in srgb,var(--s) 25%,transparent);color:color-mix(in srgb,var(--s) 70%,#333);margin-left:-6px">SA</div>
+    </div>
+  </div>`).join("");
+}
+
+const tabs=[
+  {id:"today",label:"Today",icon:`<svg width="18" height="18" viewBox="0 0 20 20"><rect x="3" y="4" width="14" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 2v3M13 2v3M3 8h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`},
+  {id:"partner",label:"Partner",icon:`<svg width="18" height="18" viewBox="0 0 20 20"><circle cx="7" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="14" cy="7" r="2.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1 17c0-3.3 2.7-6 6-6s6 2.7 6 6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M14 11c1.7 0 5 .9 5 4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>`},
+  {id:"together",label:"Together",icon:`<svg width="18" height="18" viewBox="0 0 20 20"><path d="M10 17s-7-4.2-7-8.5C3 5.9 5.1 4 7.5 4c1.4 0 2.5.7 2.5 1.5C10 4.7 11.1 4 12.5 4 14.9 4 17 5.9 17 8.5 17 12.8 10 17 10 17z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`},
+  {id:"events",label:"Events",icon:`<svg width="18" height="18" viewBox="0 0 20 20"><path d="M4 6h12M4 10h8M4 14h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`},
+  {id:"settings",label:"Settings",icon:`<svg width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.6 4.6l1.4 1.4M14 14l1.4 1.4M4.6 15.4l1.4-1.4M14 6l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`},
+];
+let activeTab="today";
+function renderNav(){
+  const el=document.getElementById("bottom-nav");
+  el.innerHTML=tabs.map(t=>`<div class="nav-btn${t.id===activeTab?" active":""}" onclick="switchTab('${t.id}')">
+    <div class="nav-icon" style="color:${t.id===activeTab?"var(--p)":"var(--t2)"}">${t.icon}</div>
+    <span class="nav-label">${t.label}</span>
+  </div>`).join("");
+}
+function switchTab(id){
+  activeTab=id;
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById("screen-"+id).classList.add("active");
+  document.getElementById("fab").style.display=(id==="events"||id==="today")?"flex":"none";
+  renderNav();
+}
+
+const tags=["date night","family","errand","fitness","travel","other"];
+let activeTag="date night";
+function renderTags(){
+  const el=document.getElementById("tag-row");
+  el.innerHTML=tags.map(t=>`<button class="tag-btn${t===activeTag?" active":""}" onclick="selectTag('${t}')">${t}</button>`).join("");
+}
+function selectTag(t){activeTag=t;renderTags();}
+
+function renderThemeGrid(){
+  const el=document.getElementById("theme-grid");
+  el.innerHTML=Object.entries(themes).map(([k,t])=>`<div class="theme-chip${k===activeTheme?" selected":""}" onclick="applyTheme('${k}')" style="background:${t.bg};border-color:${k===activeTheme?t.p:"transparent"}">
+    <div class="tc-swatch">${themeSwatches[k].map(c=>`<div class="sw" style="background:${c}"></div>`).join("")}</div>
+    <div class="tc-name" style="color:${t.t1}">${t.name}</div>
+    <div class="tc-sub" style="color:${t.t2}">${t.sub}</div>
+    ${k===activeTheme?`<div class="check-badge" style="background:${t.p}"><svg width="8" height="8" viewBox="0 0 8 8"><polyline points="1.5,4 3.5,6 6.5,2" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>`:""}
+  </div>`).join("");
+}
+
+function showEventDetail(title){sendPrompt("Tell me more about: "+title);}
+
+document.getElementById("add-event-btn").onclick=()=>openModal();
+document.getElementById("fab").onclick=()=>openModal();
+function openModal(){document.getElementById("modal").classList.add("open");renderTags();}
+document.getElementById("cancel-modal").onclick=()=>document.getElementById("modal").classList.remove("open");
+document.getElementById("modal").onclick=function(e){if(e.target===this)this.classList.remove("open");}
+document.getElementById("save-event").onclick=()=>{
+  const title=document.getElementById("evt-title").value||"New event";
+  const date=document.getElementById("evt-date").value;
+  const time=document.getElementById("evt-time").value;
+  sharedEvents.unshift({id:Date.now(),title,tag:activeTag,tagClass:"tag-"+activeTag.replace(" ","-"),date:date||"Apr 30",time:time||"7:00 PM",desc:"Added by you"});
+  renderShared();
+  document.getElementById("modal").classList.remove("open");
+  switchTab("events");
+};
+
+renderStrip();renderTimeline(todayEvents,"timeline");
+renderAvail();renderSuggestions();renderTimeline(togetherEvents,"together-timeline");
+renderShared();renderNav();renderThemeGrid();
+</script>
