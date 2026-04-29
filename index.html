@@ -1,52 +1,63 @@
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Fraunces:opsz,wght@9..144,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Fraunces:opsz,wght@9..144,300&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--p:#0B3A5A;--s:#D9A441;--bg:#F7F9FB;--sur:#fff;--t1:#0B3A5A;--t2:#4A5B6C;--acc:#0E6B66;--danger:#C0392B;--f:'DM Sans',sans-serif}
-body{font-family:var(--f)}
-.shell{width:100%;max-width:390px;margin:0 auto;background:var(--bg);border-radius:20px;overflow:hidden;border:0.5px solid var(--color-border-tertiary);font-family:var(--f);display:flex;flex-direction:column;}
+html,body{width:100%;font-family:var(--f)}
+.shell{width:100%;background:var(--bg);font-family:var(--f);display:flex;flex-direction:column;min-height:800px}
 .sbar{background:var(--p);color:#fff;padding:9px 18px 6px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:500;flex-shrink:0}
 .hdr{background:var(--p);color:#fff;padding:10px 18px 14px;flex-shrink:0}
 .hdr-row{display:flex;justify-content:space-between;align-items:center}
 .hdr h1{font-family:'Fraunces',serif;font-size:21px;font-weight:300;letter-spacing:-.5px}
 .hdr .sub{font-size:11px;opacity:.6;margin-top:1px}
-.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;cursor:pointer}
 .sync-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.15);border-radius:20px;padding:3px 9px;font-size:11px;font-weight:500;cursor:pointer;transition:background .15s}
 .sync-pill:hover{background:rgba(255,255,255,.25)}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:#4ade80}
 .sync-dot.syncing{background:#facc15;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.screen{display:none;flex:1;overflow-y:auto}
+.screen{display:none;flex:1;overflow-y:auto;overflow-x:hidden}
 .screen::-webkit-scrollbar{display:none}
-.screen.active{display:block}
-.wstrip{display:flex;gap:7px;overflow-x:auto;padding:12px 18px;background:var(--sur);border-bottom:.5px solid var(--color-border-tertiary);scrollbar-width:none;flex-shrink:0}
-.wstrip::-webkit-scrollbar{display:none}
-.dchip{min-width:42px;height:56px;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;position:relative}
+.screen.active{display:flex;flex-direction:column}
+
+.week-nav{background:var(--sur);border-bottom:.5px solid var(--color-border-tertiary);flex-shrink:0;user-select:none}
+.week-header{display:flex;align-items:center;padding:8px 14px 4px;gap:6px}
+.week-month-label{font-size:13px;font-weight:600;color:var(--t1);flex:1}
+.week-arrow{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:none;color:var(--t2);transition:background .12s;flex-shrink:0}
+.week-arrow:hover{background:color-mix(in srgb,var(--p) 8%,transparent)}
+.week-strip{display:flex;gap:4px;padding:4px 14px 10px;overflow:hidden}
+.dchip{flex:1;height:58px;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;position:relative;border:.5px solid transparent}
+.dchip:hover{background:color-mix(in srgb,var(--p) 6%,transparent)}
 .dchip .wd{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--t2)}
 .dchip .dd{font-size:16px;font-weight:500;color:var(--t1);margin-top:1px}
-.dchip.on{background:var(--p)}
+.dchip.today-chip{border-color:color-mix(in srgb,var(--p) 20%,transparent)}
+.dchip.today-chip .dd{color:var(--p);font-weight:600}
+.dchip.on{background:var(--p);border-color:var(--p)}
 .dchip.on .wd,.dchip.on .dd{color:#fff!important}
-.dchip::after{content:'';width:5px;height:5px;border-radius:50%;background:transparent;margin-top:3px;display:block}
-.dchip.dot::after{background:var(--acc)}
-.dchip.on::after{background:rgba(255,255,255,.6)}
-.tl{padding:10px 18px 90px}
-.ev{border-radius:10px;padding:8px 11px;margin-bottom:5px;cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.dchip .dot-row{display:flex;gap:2px;justify-content:center;margin-top:3px;min-height:5px}
+.dot{width:4px;height:4px;border-radius:50%}
+.tl{padding:10px 16px 20px;flex:1}
+.ev{border-radius:10px;padding:9px 12px;margin-bottom:5px;cursor:pointer;transition:all .15s;border-left:3px solid transparent}
 .ev:hover{filter:brightness(.96)}
 .ev.mine{background:color-mix(in srgb,var(--p) 10%,var(--bg));border-left-color:var(--p)}
 .ev.partner{background:color-mix(in srgb,var(--s) 14%,var(--bg));border-left-color:var(--s)}
 .ev.shared{background:color-mix(in srgb,var(--acc) 11%,var(--bg));border-left-color:var(--acc)}
-.ev .et{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.65}
+.ev .et{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;opacity:.7}
 .ev.mine .et,.ev.mine .en{color:var(--p)}
 .ev.partner .et,.ev.partner .en{color:color-mix(in srgb,var(--s) 65%,#333)}
 .ev.shared .et,.ev.shared .en{color:var(--acc)}
 .ev .en{font-size:14px;font-weight:500;margin-top:1px}
 .ev .em{font-size:11px;opacity:.65;margin-top:1px}
-.free{border:1.5px dashed color-mix(in srgb,var(--acc) 30%,transparent);border-radius:10px;padding:7px 11px;margin-bottom:5px;font-size:12px;color:var(--acc);font-weight:500;display:flex;align-items:center;gap:7px}
-.sec-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 18px 6px}
+.free{border:1.5px dashed color-mix(in srgb,var(--acc) 30%,transparent);border-radius:10px;padding:8px 12px;margin-bottom:5px;font-size:12px;color:var(--acc);font-weight:500;display:flex;align-items:center;gap:7px}
+.empty-day{padding:40px 16px;text-align:center}
+.empty-day .ed-ico{width:52px;height:52px;border-radius:18px;background:color-mix(in srgb,var(--p) 8%,transparent);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.empty-day p{font-size:14px;font-weight:500;color:var(--t1);margin-bottom:4px}
+.empty-day small{font-size:12px;color:var(--t2)}
+.sec-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 18px 6px;flex-shrink:0}
 .sec-hdr h2{font-size:15px;font-weight:600;color:var(--t1)}
 .sec-hdr .act{font-size:12px;color:var(--acc);font-weight:500;cursor:pointer;padding:4px 8px;border-radius:7px;transition:background .15s}
 .sec-hdr .act:hover{background:color-mix(in srgb,var(--acc) 10%,transparent)}
-.ev-card{background:var(--sur);border-radius:13px;border:.5px solid var(--color-border-tertiary);padding:13px 14px;margin:0 18px 8px;cursor:pointer;transition:border-color .15s}
+.ev-card{background:var(--sur);border-radius:13px;border:.5px solid var(--color-border-tertiary);padding:13px 14px;margin:0 16px 8px;cursor:pointer;transition:border-color .15s}
 .ev-card:hover{border-color:var(--acc)}
 .ev-card-top{display:flex;justify-content:space-between;align-items:flex-start}
 .ev-card-title{font-size:15px;font-weight:600;color:var(--t1)}
@@ -54,7 +65,7 @@ body{font-family:var(--f)}
 .tag.date-night{background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc)}
 .tag.family{background:color-mix(in srgb,var(--p) 11%,transparent);color:var(--p)}
 .tag.errand{background:color-mix(in srgb,var(--s) 22%,transparent);color:color-mix(in srgb,var(--s) 65%,#333)}
-.tag.fitness{background:color-mix(in srgb,#e74 14%,transparent);color:#b35f00}
+.tag.fitness{background:color-mix(in srgb,#e74 14%,transparent);color:#8a4800}
 .tag.travel{background:color-mix(in srgb,#3b82f6 12%,transparent);color:#1e40af}
 .tag.other{background:color-mix(in srgb,#888 12%,transparent);color:#444}
 .ev-card-time{font-size:12px;color:var(--t2);margin-top:3px}
@@ -68,14 +79,12 @@ body{font-family:var(--f)}
 .btn-edit:hover{background:color-mix(in srgb,var(--p) 18%,transparent)}
 .btn-del{background:color-mix(in srgb,var(--danger) 10%,transparent);color:var(--danger)}
 .btn-del:hover{background:color-mix(in srgb,var(--danger) 18%,transparent)}
-.partner-wrap{padding:0 0 90px}
+.partner-wrap{padding:0 0 20px;flex:1}
 .p-banner{background:color-mix(in srgb,var(--s) 12%,var(--bg));padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:.5px solid var(--color-border-tertiary)}
 .p-info .name{font-size:15px;font-weight:600;color:var(--t1)}
 .p-info .stat{font-size:11px;color:var(--t2);margin-top:2px;display:flex;align-items:center;gap:4px}
 .online{width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0}
-.avail-card{background:var(--sur);border-radius:13px;border:.5px solid var(--color-border-tertiary);padding:14px;margin:10px 18px}
-.avail-ttl{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.avail-badge{background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px}
+.avail-card{background:var(--sur);border-radius:13px;border:.5px solid var(--color-border-tertiary);padding:14px;margin:10px 16px}
 .seg-row{display:flex;gap:2px;margin-bottom:4px;align-items:center}
 .seg-lbl{font-size:9px;color:var(--t2);min-width:22px}
 .seg{height:18px;border-radius:3px;flex:1}
@@ -86,20 +95,20 @@ body{font-family:var(--f)}
 .leg{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
 .li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--t2)}
 .ld{width:8px;height:8px;border-radius:2px}
-.suggest-row{display:flex;gap:8px;overflow-x:auto;padding:2px 18px 10px;scrollbar-width:none}
+.suggest-row{display:flex;gap:8px;overflow-x:auto;padding:2px 16px 10px;scrollbar-width:none;flex-shrink:0}
 .suggest-row::-webkit-scrollbar{display:none}
 .sc{background:var(--sur);border:.5px solid var(--color-border-tertiary);border-radius:11px;padding:10px 12px;min-width:128px;flex-shrink:0;cursor:pointer;transition:border-color .15s}
 .sc:hover{border-color:var(--acc)}
 .sc .st{font-size:11px;font-weight:600;color:var(--acc)}
 .sc .sl{font-size:12px;color:var(--t1);margin-top:2px;font-weight:500}
 .sc .ss{font-size:10px;color:var(--t2);margin-top:1px}
-.settings-wrap{padding:10px 0 90px}
-.s-sec{margin-bottom:18px;padding:0 18px}
+.settings-wrap{padding:10px 0 20px;flex:1}
+.s-sec{margin-bottom:18px;padding:0 16px}
 .s-sec h3{font-size:10px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px}
 .s-row{background:var(--sur);border-radius:12px;border:.5px solid var(--color-border-tertiary);padding:12px 14px;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:border-color .15s}
 .s-row:hover{border-color:var(--acc)}
 .s-lft{display:flex;align-items:center;gap:11px}
-.s-ico{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.s-ico{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .s-txt{font-size:13px;font-weight:500;color:var(--t1)}
 .s-sub{font-size:11px;color:var(--t2);margin-top:1px}
 .s-rgt{font-size:12px;color:var(--t2)}
@@ -114,10 +123,11 @@ body{font-family:var(--f)}
 .tc .sw{width:14px;height:14px;border-radius:3px}
 .tc .tn{font-size:11px;font-weight:600}
 .tc .ts{font-size:9px}
-.fab{width:48px;height:48px;border-radius:14px;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;font-weight:300;transition:all .15s;flex-shrink:0}
+.fab-row{display:flex;justify-content:flex-end;padding:0 16px 6px;flex-shrink:0}
+.fab{width:48px;height:48px;border-radius:14px;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:22px;font-weight:300;transition:all .15s}
 .fab:hover{opacity:.88}
 .bnav{background:var(--sur);border-top:.5px solid var(--color-border-tertiary);display:flex;padding:6px 0 10px;flex-shrink:0}
-.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 2px;border-radius:9px;transition:all .15s}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 2px}
 .nb .nl{font-size:9px;font-weight:500;color:var(--t2);opacity:.6}
 .nb.on .nl{color:var(--p);opacity:1;font-weight:600}
 .nb .ni{color:var(--t2);opacity:.5;display:flex;align-items:center;justify-content:center}
@@ -132,7 +142,7 @@ body{font-family:var(--f)}
 .fl{margin-bottom:12px}
 .fl label{font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px}
 .fl input,.fl textarea,.fl select{width:100%;background:var(--sur);border:.5px solid var(--color-border-tertiary);border-radius:9px;padding:9px 11px;font-size:13px;color:var(--t1);font-family:var(--f);outline:none;transition:border-color .15s}
-.fl input:focus,.fl textarea:focus,.fl select:focus{border-color:var(--acc)}
+.fl input:focus,.fl textarea:focus{border-color:var(--acc)}
 .fl textarea{resize:none}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .tag-row{display:flex;gap:5px;flex-wrap:wrap}
@@ -147,17 +157,12 @@ body{font-family:var(--f)}
 .del-sub{font-size:13px;color:var(--t2);line-height:1.5;margin-bottom:16px}
 .btn-danger{width:100%;padding:12px;background:var(--danger);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--f);transition:opacity .15s}
 .btn-danger:hover{opacity:.88}
-.toast{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);background:var(--t1);color:#fff;padding:9px 18px;border-radius:20px;font-size:12px;font-weight:500;white-space:nowrap;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast{position:absolute;bottom:72px;left:50%;transform:translateX(-50%);background:var(--t1);color:#fff;padding:9px 18px;border-radius:20px;font-size:12px;font-weight:500;white-space:nowrap;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
-.link-card{background:var(--sur);border-radius:13px;border:.5px solid var(--color-border-tertiary);padding:16px;margin:12px 18px;text-align:center}
+.notif-item{background:var(--sur);border-radius:12px;border:.5px solid var(--color-border-tertiary);padding:11px 13px;margin:0 16px 6px;display:flex;gap:10px;align-items:flex-start}
+.link-card{background:var(--sur);border-radius:13px;border:.5px solid var(--color-border-tertiary);padding:16px;margin:12px 16px;text-align:center}
 .link-code{font-size:28px;font-weight:600;letter-spacing:6px;color:var(--p);margin:10px 0;font-family:monospace}
-.notif-item{background:var(--sur);border-radius:12px;border:.5px solid var(--color-border-tertiary);padding:11px 13px;margin:0 18px 6px;display:flex;gap:10px;align-items:flex-start}
-.notif-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
-.notif-txt{font-size:13px;color:var(--t1)}
-.notif-time{font-size:11px;color:var(--t2);margin-top:2px}
 </style>
-
-<h2 class="sr-only">SyncSpace v2 — fully interactive shared calendar app prototype with create, edit, delete events, live sync simulation, and all navigation functional.</h2>
 
 <div class="shell" id="app">
   <div class="sbar">
@@ -173,19 +178,27 @@ body{font-family:var(--f)}
 
   <div class="hdr">
     <div class="hdr-row">
-      <div>
-        <h1>SyncSpace</h1>
-        <div class="sub" id="hdr-sub">Wednesday, April 29</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div class="avatar" style="background:rgba(255,255,255,.2);color:#fff;cursor:pointer" onclick="switchTab('settings')" title="Settings">JA</div>
-      </div>
+      <div><h1>SyncSpace</h1><div class="sub" id="hdr-sub">Wednesday, April 29</div></div>
+      <div class="avatar" style="background:rgba(255,255,255,.2);color:#fff" onclick="switchTab('settings')">JA</div>
     </div>
   </div>
 
   <div id="screen-today" class="screen active">
-    <div class="wstrip" id="wstrip"></div>
-    <div class="tl" id="tl-today"></div>
+    <div class="week-nav">
+      <div class="week-header">
+        <span class="week-month-label" id="week-month-label">April 2026</span>
+        <button class="week-arrow" onclick="shiftWeek(-1)">
+          <svg width="14" height="14" viewBox="0 0 14 14"><polyline points="9,2 4,7 9,12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="week-arrow" onclick="shiftWeek(1)">
+          <svg width="14" height="14" viewBox="0 0 14 14"><polyline points="5,2 10,7 5,12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="week-arrow" onclick="goToday()" style="font-size:10px;font-weight:600;color:var(--acc);width:auto;padding:0 8px;border:.5px solid color-mix(in srgb,var(--acc) 30%,transparent);border-radius:6px;height:24px">Today</button>
+      </div>
+      <div class="week-strip" id="week-strip"></div>
+    </div>
+    <div class="tl" id="tl-today" style="flex:1;overflow-y:auto;padding-bottom:20px"></div>
+    <div class="fab-row"><div class="fab" onclick="openCreate()">+</div></div>
   </div>
 
   <div id="screen-partner" class="screen">
@@ -198,7 +211,10 @@ body{font-family:var(--f)}
         </div>
       </div>
       <div class="avail-card">
-        <div class="avail-ttl">Weekly overlap <span class="avail-badge">18 hrs free</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span style="font-size:13px;font-weight:600;color:var(--t1)">Weekly overlap</span>
+          <span style="background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px">18 hrs free</span>
+        </div>
         <div style="display:flex;gap:4px;margin-bottom:5px;padding-left:26px">
           <span style="flex:1;font-size:9px;color:var(--t2);text-align:center">6a</span>
           <span style="flex:1;font-size:9px;color:var(--t2);text-align:center">9a</span>
@@ -215,7 +231,7 @@ body{font-family:var(--f)}
           <div class="li"><div class="ld" style="background:color-mix(in srgb,#e55 18%,transparent)"></div>Both busy</div>
         </div>
       </div>
-      <div class="sec-hdr" style="padding-top:4px"><h2>Sam's schedule today</h2></div>
+      <div class="sec-hdr"><h2>Sam's schedule today</h2></div>
       <div id="partner-events"></div>
     </div>
   </div>
@@ -223,38 +239,39 @@ body{font-family:var(--f)}
   <div id="screen-together" class="screen">
     <div class="sec-hdr"><h2>Smart suggestions</h2></div>
     <div class="suggest-row" id="suggestions"></div>
-    <div class="sec-hdr"><h2>Merged timeline</h2><span class="act" onclick="toggleFilter()">Filter</span></div>
-    <div class="tl" id="tl-together" style="padding-top:0;padding-bottom:80px"></div>
+    <div class="sec-hdr"><h2>Merged timeline</h2><span class="act" onclick="showToast('Filter coming soon')">Filter</span></div>
+    <div class="tl" id="tl-together" style="flex:1;overflow-y:auto;padding-bottom:20px"></div>
   </div>
 
   <div id="screen-events" class="screen">
     <div class="sec-hdr"><h2>Shared events</h2><span class="act" onclick="openCreate()">+ New</span></div>
-    <div id="events-list" style="padding-bottom:90px"></div>
+    <div id="events-list" style="flex:1;overflow-y:auto;padding-bottom:20px"></div>
+    <div class="fab-row"><div class="fab" onclick="openCreate()">+</div></div>
   </div>
 
   <div id="screen-settings" class="screen">
-    <div class="settings-wrap" id="settings-wrap"></div>
+    <div class="settings-wrap" id="settings-wrap" style="flex:1;overflow-y:auto"></div>
   </div>
 
   <div id="screen-link" class="screen">
     <div class="sec-hdr"><h2>Partner link</h2></div>
     <div class="link-card">
       <div style="font-size:13px;color:var(--t2);margin-bottom:4px">Your link code</div>
-      <div class="link-code" id="link-code">JA-8472</div>
-      <div style="font-size:12px;color:var(--t2);margin-bottom:12px">Share this code with your partner to connect</div>
+      <div class="link-code">JA-8472</div>
+      <div style="font-size:12px;color:var(--t2);margin-bottom:12px">Share this code with your partner</div>
       <button class="btn-primary" style="width:auto;padding:9px 22px" onclick="copyCode()">Copy code</button>
     </div>
     <div class="sec-hdr" style="margin-top:8px"><h2>Enter partner's code</h2></div>
-    <div style="padding:0 18px">
+    <div style="padding:0 16px">
       <div class="fl"><input type="text" placeholder="e.g. SA-3921" id="partner-code-input" maxlength="7"></div>
       <button class="btn-primary" onclick="linkPartner()">Link partner</button>
     </div>
     <div class="sec-hdr" style="margin-top:16px"><h2>Current link</h2></div>
-    <div style="padding:0 18px">
+    <div style="padding:0 16px">
       <div class="s-row">
         <div class="s-lft">
           <div class="s-ico" style="background:color-mix(in srgb,var(--s) 20%,transparent)">
-            <svg width="16" height="16" viewBox="0 0 20 20"><circle cx="7" cy="7" r="3.5" fill="none" stroke="color-mix(in srgb,var(--s) 65%,#333)" stroke-width="1.5"/><circle cx="14" cy="7" r="2.8" fill="none" stroke="color-mix(in srgb,var(--s) 65%,#333)" stroke-width="1.3"/><path d="M1 18c0-3.3 2.7-6 6-6s6 2.7 6 6" fill="none" stroke="color-mix(in srgb,var(--s) 65%,#333)" stroke-width="1.5"/></svg>
+            <svg width="16" height="16" viewBox="0 0 18 18"><circle cx="6" cy="6" r="3" fill="none" stroke="color-mix(in srgb,var(--s) 65%,#333)" stroke-width="1.4"/><circle cx="13" cy="6" r="2.5" fill="none" stroke="color-mix(in srgb,var(--s) 65%,#333)" stroke-width="1.3"/><path d="M1 16c0-3 2.2-5 5-5s5 2 5 5" fill="none" stroke="color-mix(in srgb,var(--s) 65%,#333)" stroke-width="1.4"/></svg>
           </div>
           <div><div class="s-txt">Sam Archer</div><div class="s-sub">Linked · SA-3921</div></div>
         </div>
@@ -265,11 +282,7 @@ body{font-family:var(--f)}
 
   <div id="screen-notifications" class="screen">
     <div class="sec-hdr"><h2>Notifications</h2><span class="act" onclick="clearNotifs()">Clear all</span></div>
-    <div id="notif-list" style="padding-bottom:90px"></div>
-  </div>
-
-  <div style="display:flex;justify-content:flex-end;padding:0 18px 6px;flex-shrink:0" id="fab-row">
-    <div class="fab" id="fab" onclick="openCreate()">+</div>
+    <div id="notif-list" style="flex:1;overflow-y:auto;padding-bottom:20px"></div>
   </div>
 
   <div class="bnav" id="bnav"></div>
@@ -298,9 +311,7 @@ body{font-family:var(--f)}
   <div class="sheet">
     <div class="hdl"></div>
     <div class="del-sheet">
-      <div class="del-ico">
-        <svg width="22" height="22" viewBox="0 0 22 22"><path d="M4 6h14M9 6V4h4v2M9 10v6M13 10v6M5 6l1 12h10l1-12" stroke="var(--danger)" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
+      <div class="del-ico"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M4 6h14M9 6V4h4v2M9 10v6M13 10v6M5 6l1 12h10l1-12" stroke="var(--danger)" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <div class="del-ttl">Delete event?</div>
       <div class="del-sub" id="del-sub">This will remove the event for both you and Sam.</div>
       <button class="btn-danger" onclick="confirmDelete()">Delete event</button>
@@ -322,7 +333,7 @@ body{font-family:var(--f)}
       <svg width="24" height="24" viewBox="0 0 24 24"><path d="M4 12a8 8 0 018-8v0a8 8 0 018 8" fill="none" stroke="var(--acc)" stroke-width="2" stroke-linecap="round"/><path d="M20 12a8 8 0 01-8 8v0a8 8 0 01-8-8" fill="none" stroke="var(--acc)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 2"/></svg>
     </div>
     <div style="font-size:16px;font-weight:600;color:var(--t1);margin-bottom:6px" id="sync-modal-ttl">Syncing with Sam...</div>
-    <div style="font-size:13px;color:var(--t2);margin-bottom:16px" id="sync-modal-sub">Pushing 2 shared events</div>
+    <div style="font-size:13px;color:var(--t2);margin-bottom:16px" id="sync-modal-sub">Pushing shared events</div>
     <div style="background:var(--color-border-tertiary);border-radius:4px;height:4px;overflow:hidden;margin:0 18px 16px">
       <div id="sync-bar" style="background:var(--acc);height:100%;width:0;border-radius:4px;transition:width .4s"></div>
     </div>
@@ -338,25 +349,24 @@ const THEMES={
   D:{name:"Dark mode",sub:"Elegant",p:"#1E88E5",s:"#90CAF9",bg:"#121212",sur:"#1E1E1E",t1:"#FFFFFF",t2:"#B0BEC5",acc:"#FFAB40",sw:["#1E88E5","#90CAF9","#FFAB40"]}
 };
 const TAGS=["date night","family","errand","fitness","travel","other"];
-const AVAIL=[
-  ["bb","bp","free","free","free","bm"],
-  ["free","bm","bm","free","free","bp"],
-  ["bm","free","bb","bp","free","free"],
-  ["free","bp","free","bm","bm","free"],
-  ["bb","free","free","free","free","free"]
-];
+const MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MNF=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const AVAIL=[["bb","bp","free","free","free","bm"],["free","bm","bm","free","free","bp"],["bm","free","bb","bp","free","free"],["free","bp","free","bm","bm","free"],["bb","free","free","free","free","free"]];
 const WDAYS=["Mon","Tue","Wed","Thu","Fri"];
-const DOWS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-const DATES=[26,27,28,29,30,1,2];
-const DOT_DAYS=[1,3,4,6];
 
+const TODAY=new Date(2026,3,29);
+let weekOffset=0;
+let selectedDate=new Date(TODAY);
 let activeTab="today";
 let activeTheme="A";
 let activeTag="date night";
 let editingId=null;
 let deleteId=null;
-let filterActive=false;
-let notifs=[];
+let notifs=[
+  {msg:"Sam added: Team dinner · Fri May 3",time:"2 min ago"},
+  {msg:"Sync complete — 4 events synced",time:"10 min ago"}
+];
 let settings={reminders:true,dailySummary:true,partnerUpdates:true,smartSuggest:true};
 
 let sharedEvents=[
@@ -364,269 +374,170 @@ let sharedEvents=[
   {id:2,title:"Grocery run",tag:"errand",date:"2026-04-30",time:"10:00",notes:"Costco + Trader Joe's"},
   {id:3,title:"Mom's birthday dinner",tag:"family",date:"2026-05-01",time:"18:30",notes:"Reservation at Via Napoli. 6 people."},
   {id:4,title:"Saturday hike",tag:"fitness",date:"2026-05-03",time:"08:00",notes:"Angels Landing. Bring extra water."},
+  {id:5,title:"Brunch together",tag:"date night",date:"2026-05-05",time:"10:30",notes:"Tried that new spot on Main"},
+  {id:6,title:"Costco run",tag:"errand",date:"2026-05-07",time:"11:00",notes:"Need to restock pantry"},
+  {id:7,title:"Weekend getaway",tag:"travel",date:"2026-05-09",time:"09:00",notes:"Drive up Friday night, back Sunday"},
 ];
-let nextId=5;
+let nextId=8;
 
-const myWorkEvents=[
-  {time:"08:00",dur:"1h",title:"Sprint Planning",sub:"Engineering team"},
-  {time:"13:30",dur:"1h",title:"Code Review",sub:"PR #142 & #145"},
-  {time:"15:00",dur:"1h",title:"1:1 with Lead",sub:"Weekly check-in"},
-];
-const partnerWorkEvents=[
-  {time:"09:00",dur:"1h",title:"Morning Standup",sub:"Remote"},
-  {time:"13:00",dur:"1.5h",title:"Client Review",sub:"Zoom call"},
-  {time:"16:00",dur:"1h",title:"1:1 with Manager",sub:""},
-];
-const freeSlots=[
-  {after:"09:00",title:"Both free · 9–10 AM"},
-  {after:"14:30",title:"Both free · 2:30–3 PM"},
-  {after:"17:00",title:"Both free from 5 PM"},
-];
+const MY_WORK={
+  "2026-04-28":[{time:"09:00",dur:"1h",title:"Weekly sync",sub:"All hands"}],
+  "2026-04-29":[{time:"08:00",dur:"1h",title:"Sprint planning",sub:"Engineering"},{time:"13:30",dur:"1h",title:"Code review",sub:"PR #142"},{time:"15:00",dur:"1h",title:"1:1 with lead",sub:""}],
+  "2026-04-30":[{time:"10:00",dur:"2h",title:"Design review",sub:"Q2 roadmap"},{time:"14:00",dur:"1h",title:"Stakeholder call",sub:""}],
+  "2026-05-01":[{time:"09:00",dur:"30m",title:"Standup",sub:""},{time:"11:00",dur:"2h",title:"Deep work block",sub:"No meetings"}],
+  "2026-05-02":[],
+  "2026-05-04":[{time:"09:00",dur:"30m",title:"Standup",sub:""},{time:"13:00",dur:"1h",title:"Sprint review",sub:""}],
+  "2026-05-05":[],
+  "2026-05-06":[{time:"10:00",dur:"1h",title:"Planning session",sub:"Q3 kickoff"}],
+};
+const PARTNER_WORK={
+  "2026-04-29":[{time:"09:00",dur:"1h",title:"Morning standup",sub:"Remote"},{time:"13:00",dur:"1.5h",title:"Client review",sub:"Zoom"},{time:"16:00",dur:"1h",title:"1:1 w/ manager",sub:""}],
+  "2026-04-30":[{time:"09:30",dur:"30m",title:"Standup",sub:""},{time:"14:00",dur:"2h",title:"Client workshop",sub:""}],
+  "2026-05-01":[{time:"09:00",dur:"30m",title:"Standup",sub:""},{time:"15:00",dur:"1h",title:"Team retro",sub:""}],
+  "2026-05-05":[{time:"10:00",dur:"1h",title:"Weekly review",sub:""}],
+};
 
-function css(k,v){document.getElementById("app").style.setProperty(k,v);}
-function applyTheme(k){
-  activeTheme=k;
-  const t=THEMES[k];
-  css("--p",t.p);css("--s",t.s);css("--bg",t.bg);css("--sur",t.sur);
-  css("--t1",t.t1);css("--t2",t.t2);css("--acc",t.acc);
-  renderSettings();
-  showToast("Theme changed to "+t.name);
+function dateKey(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function fmtDate(s){if(!s)return"";const[y,m,d]=s.split("-");return MN[parseInt(m)-1]+" "+parseInt(d);}
+function fmtTime(t){if(!t)return"";let[h,m]=t.split(":");h=parseInt(h);return(h%12||12)+":"+m+" "+(h<12?"AM":"PM");}
+function tagClass(t){return(t||"other").replace(/ /g,"-");}
+function sameDateKey(d1,d2){return dateKey(d1)===dateKey(d2);}
+
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+
+function getWeekStart(){
+  const d=new Date(TODAY);
+  d.setDate(d.getDate()+weekOffset*7);
+  const dow=d.getDay();
+  d.setDate(d.getDate()-dow);
+  return d;
 }
 
-function fmtDate(d){
-  if(!d)return"";
-  const[y,m,day]=d.split("-");
-  const mn=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  return mn[parseInt(m)-1]+" "+parseInt(day);
-}
-function fmtTime(t){
-  if(!t)return"";
-  let[h,m]=t.split(":");
-  h=parseInt(h);
-  return (h%12||12)+":"+m+" "+(h<12?"AM":"PM");
-}
-function tagClass(t){return t?t.replace(/ /g,"-"):"other";}
+function renderWeek(){
+  const ws=getWeekStart();
+  const days=Array.from({length:7},(_,i)=>addDays(ws,i));
+  const months=[...new Set(days.map(d=>d.getMonth()))];
+  const label=months.length===1?MNF[months[0]]+" "+days[0].getFullYear():MN[months[0]]+" / "+MN[months[1]]+" "+days[days.length-1].getFullYear();
+  document.getElementById("week-month-label").textContent=label;
 
-function showToast(msg,dur=2000){
-  const el=document.getElementById("toast");
-  el.textContent=msg;el.classList.add("show");
-  setTimeout(()=>el.classList.remove("show"),dur);
-}
-
-function addNotif(msg){
-  notifs.unshift({msg,time:"Just now",id:Date.now()});
-  if(notifs.length>20)notifs.pop();
-  renderNotifs();
-}
-
-function triggerSync(){
-  document.getElementById("sync-dot").classList.add("syncing");
-  document.getElementById("sync-lbl").textContent="Syncing...";
-  openModal("modal-sync");
-  let pct=0;
-  const bar=document.getElementById("sync-bar");
-  const iv=setInterval(()=>{
-    pct=Math.min(100,pct+Math.round(Math.random()*18+8));
-    bar.style.width=pct+"%";
-    if(pct>=100){
-      clearInterval(iv);
-      document.getElementById("sync-modal-ttl").textContent="All synced!";
-      document.getElementById("sync-modal-sub").textContent=sharedEvents.length+" events up to date";
-      document.getElementById("sync-dot").classList.remove("syncing");
-      document.getElementById("sync-lbl").textContent="Synced";
-      addNotif("Sync complete — "+sharedEvents.length+" events synced with Sam");
-    }
-  },220);
+  document.getElementById("week-strip").innerHTML=days.map(d=>{
+    const k=dateKey(d);
+    const isToday=sameDateKey(d,TODAY);
+    const isSel=sameDateKey(d,selectedDate);
+    const myEvs=(MY_WORK[k]||[]).length;
+    const ptEvs=(PARTNER_WORK[k]||[]).length;
+    const shEvs=sharedEvents.filter(e=>e.date===k).length;
+    let dots="";
+    if(myEvs>0)dots+=`<div class="dot" style="background:${isSel?"rgba(255,255,255,.7)":getCssVar("--p")}"></div>`;
+    if(ptEvs>0)dots+=`<div class="dot" style="background:${isSel?"rgba(255,255,255,.6)":getCssVar("--s")}"></div>`;
+    if(shEvs>0)dots+=`<div class="dot" style="background:${isSel?"rgba(255,255,255,.8)":getCssVar("--acc")}"></div>`;
+    return`<div class="dchip${isToday&&!isSel?" today-chip":""}${isSel?" on":""}" onclick="selectDay('${k}')">
+      <span class="wd">${DOW[d.getDay()]}</span>
+      <span class="dd">${d.getDate()}</span>
+      <div class="dot-row">${dots}</div>
+    </div>`;
+  }).join("");
 }
 
-function openModal(id){document.getElementById(id).classList.add("open");}
-function closeModal(id){
-  document.getElementById(id).classList.remove("open");
-  if(id==="modal-create"){editingId=null;}
+function getCssVar(v){
+  return getComputedStyle(document.getElementById("app")).getPropertyValue(v).trim();
 }
 
-function openCreate(){
-  editingId=null;
-  document.getElementById("modal-title").textContent="New shared event";
-  document.getElementById("save-btn").textContent="Save event";
-  document.getElementById("f-title").value="";
-  document.getElementById("f-date").value="2026-04-30";
-  document.getElementById("f-time").value="19:00";
-  document.getElementById("f-notes").value="";
-  activeTag="date night";
-  renderTagBtns();
-  openModal("modal-create");
-}
-
-function openEdit(id){
-  const ev=sharedEvents.find(e=>e.id===id);
-  if(!ev)return;
-  editingId=id;
-  document.getElementById("modal-title").textContent="Edit event";
-  document.getElementById("save-btn").textContent="Update event";
-  document.getElementById("f-title").value=ev.title;
-  document.getElementById("f-date").value=ev.date;
-  document.getElementById("f-time").value=ev.time;
-  document.getElementById("f-notes").value=ev.notes||"";
-  activeTag=ev.tag||"date night";
-  renderTagBtns();
-  closeModal("modal-detail");
-  openModal("modal-create");
-}
-
-function openDelete(id){
-  const ev=sharedEvents.find(e=>e.id===id);
-  if(!ev)return;
-  deleteId=id;
-  document.getElementById("del-sub").textContent="\""+ev.title+"\" will be removed for both you and Sam.";
-  closeModal("modal-detail");
-  openModal("modal-delete");
-}
-
-function confirmDelete(){
-  const ev=sharedEvents.find(e=>e.id===deleteId);
-  if(ev){addNotif("Deleted: "+ev.title);}
-  sharedEvents=sharedEvents.filter(e=>e.id!==deleteId);
-  deleteId=null;
-  closeModal("modal-delete");
-  renderEvents();
+function selectDay(key){
+  const[y,m,d]=key.split("-").map(Number);
+  selectedDate=new Date(y,m-1,d);
+  renderWeek();
   renderTodayTimeline();
-  renderTogetherTimeline();
-  showToast("Event deleted");
+  const dayNames=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  document.getElementById("hdr-sub").textContent=dayNames[selectedDate.getDay()]+", "+MNF[selectedDate.getMonth()]+" "+selectedDate.getDate();
 }
 
-function saveEvent(){
-  const title=document.getElementById("f-title").value.trim()||"Untitled event";
-  const date=document.getElementById("f-date").value||"2026-04-30";
-  const time=document.getElementById("f-time").value||"19:00";
-  const notes=document.getElementById("f-notes").value.trim();
-  if(editingId){
-    const idx=sharedEvents.findIndex(e=>e.id===editingId);
-    if(idx>=0){sharedEvents[idx]={id:editingId,title,tag:activeTag,date,time,notes};}
-    addNotif("Updated: "+title);
-    showToast("Event updated");
-  } else {
-    sharedEvents.unshift({id:nextId++,title,tag:activeTag,date,time,notes});
-    addNotif("New event created: "+title);
-    showToast("Event saved");
-  }
-  closeModal("modal-create");
-  renderEvents();
+function shiftWeek(dir){
+  weekOffset+=dir;
+  renderWeek();
+}
+function goToday(){
+  weekOffset=0;
+  selectedDate=new Date(TODAY);
+  renderWeek();
   renderTodayTimeline();
-  renderTogetherTimeline();
-  setTimeout(()=>triggerSync(),800);
-}
-
-function openDetail(id){
-  const ev=sharedEvents.find(e=>e.id===id);
-  if(!ev)return;
-  document.getElementById("detail-sheet").innerHTML=`
-    <div class="hdl"></div>
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
-      <div style="font-size:17px;font-weight:600;color:var(--t1);flex:1;margin-right:10px">${ev.title}</div>
-      <span class="tag ${tagClass(ev.tag)}">${ev.tag}</span>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <svg width="15" height="15" viewBox="0 0 16 16" style="flex-shrink:0"><rect x="1" y="3" width="14" height="12" rx="2" fill="none" stroke="var(--t2)" stroke-width="1.3"/><path d="M5 1v3M11 1v3M1 7h14" stroke="var(--t2)" stroke-width="1.3" stroke-linecap="round"/></svg>
-        <span style="font-size:13px;color:var(--t2)">${fmtDate(ev.date)}</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <svg width="15" height="15" viewBox="0 0 16 16" style="flex-shrink:0"><circle cx="8" cy="8" r="6.5" fill="none" stroke="var(--t2)" stroke-width="1.3"/><path d="M8 4.5V8l2.5 2" stroke="var(--t2)" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-        <span style="font-size:13px;color:var(--t2)">${fmtTime(ev.time)}</span>
-      </div>
-      ${ev.notes?`<div style="display:flex;align-items:flex-start;gap:10px"><svg width="15" height="15" viewBox="0 0 16 16" style="flex-shrink:0;margin-top:1px"><rect x="2" y="2" width="12" height="12" rx="2" fill="none" stroke="var(--t2)" stroke-width="1.3"/><path d="M5 6h6M5 9h4" stroke="var(--t2)" stroke-width="1.3" stroke-linecap="round"/></svg><span style="font-size:13px;color:var(--t2);line-height:1.4">${ev.notes}</span></div>`:""}
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px">
-      <div class="mav" style="background:color-mix(in srgb,var(--p) 15%,transparent);color:var(--p)">JA</div>
-      <div class="mav" style="background:color-mix(in srgb,var(--s) 25%,transparent);color:color-mix(in srgb,var(--s) 65%,#333);margin-left:-4px">SA</div>
-      <span style="font-size:11px;color:var(--t2);margin-left:4px">Jordan & Sam · shared</span>
-    </div>
-    <button class="btn-primary" onclick="openEdit(${ev.id})">Edit event</button>
-    <button class="btn-ghost" style="color:var(--danger);margin-top:6px" onclick="openDelete(${ev.id})">Delete event</button>
-    <button class="btn-ghost" onclick="closeModal('modal-detail')">Close</button>
-  `;
-  openModal("modal-detail");
-}
-
-function renderTagBtns(){
-  document.getElementById("tag-btns").innerHTML=TAGS.map(t=>`<button class="tbtn${t===activeTag?" on":""}" onclick="setTag('${t}')">${t}</button>`).join("");
-}
-function setTag(t){activeTag=t;renderTagBtns();}
-
-function renderStrip(){
-  document.getElementById("wstrip").innerHTML=DATES.map((d,i)=>`
-    <div class="dchip${i===3?" on":""}${DOT_DAYS.includes(i)?" dot":""}" onclick="selectDay(this)">
-      <span class="wd">${DOWS[(i+3)%7]}</span><span class="dd">${d}</span>
-    </div>`).join("");
-}
-function selectDay(el){
-  document.querySelectorAll(".dchip").forEach(c=>c.classList.remove("on"));
-  el.classList.add("on");
-}
-
-function evBlock(ev,type){
-  const lbl=type==="mine"?"You":type==="partner"?"Sam":"Shared";
-  return`<div class="ev ${type}" onclick="showToast('${ev.title}')">
-    <div class="et">${lbl} · ${ev.time} (${ev.dur})</div>
-    <div class="en">${ev.title}</div>
-    ${ev.sub?`<div class="em">${ev.sub}</div>`:""}
-  </div>`;
+  document.getElementById("hdr-sub").textContent="Wednesday, April 29";
 }
 
 function renderTodayTimeline(){
-  const todayShared=sharedEvents.filter(e=>e.date==="2026-04-29");
-  let html="";
-  html+=evBlock(myWorkEvents[0],"mine");
-  html+=`<div class="free"><svg width="13" height="13" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="var(--acc)" stroke-width="1.4"/><path d="M7 4v3l2 2" stroke="var(--acc)" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>Both free · 9–10 AM</div>`;
-  html+=evBlock(partnerWorkEvents[0],"partner");
-  todayShared.forEach(e=>{
-    html+=`<div class="ev shared" onclick="openDetail(${e.id})">
-      <div class="et">Shared · ${fmtTime(e.time)}</div>
-      <div class="en">${e.title}</div>
-      ${e.notes?`<div class="em">${e.notes.substring(0,40)}${e.notes.length>40?"...":""}</div>`:""}
+  const k=dateKey(selectedDate);
+  const myEvs=MY_WORK[k]||[];
+  const ptEvs=PARTNER_WORK[k]||[];
+  const shEvs=sharedEvents.filter(e=>e.date===k);
+
+  if(myEvs.length===0&&ptEvs.length===0&&shEvs.length===0){
+    document.getElementById("tl-today").innerHTML=`<div class="empty-day">
+      <div class="ed-ico"><svg width="22" height="22" viewBox="0 0 22 22"><rect x="2" y="3" width="18" height="17" rx="3" fill="none" stroke="var(--p)" stroke-width="1.5"/><path d="M7 1v4M15 1v4M2 9h18" stroke="var(--p)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <p>Nothing scheduled</p>
+      <small>Tap + to add a shared event</small>
     </div>`;
+    return;
+  }
+
+  let all=[];
+  myEvs.forEach(e=>all.push({...e,type:"mine"}));
+  ptEvs.forEach(e=>all.push({...e,type:"partner"}));
+  shEvs.forEach(e=>all.push({time:e.time,title:e.title,sub:e.notes,type:"shared",id:e.id,tag:e.tag}));
+  all.sort((a,b)=>a.time.localeCompare(b.time));
+
+  let freeInserted=false;
+  let html="";
+  all.forEach((e,i)=>{
+    if(!freeInserted&&e.time>="09:30"&&all[i-1]&&all[i-1].time<"09:30"){
+      html+=`<div class="free"><svg width="13" height="13" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="var(--acc)" stroke-width="1.4"/><path d="M7 4v3l2 2" stroke="var(--acc)" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>Both free · 9:30–10 AM</div>`;
+      freeInserted=true;
+    }
+    if(e.type==="shared"){
+      html+=`<div class="ev shared" onclick="openDetail(${e.id})">
+        <div class="et">Shared · ${fmtTime(e.time)}</div>
+        <div class="en">${e.title}</div>
+        ${e.sub?`<div class="em">${e.sub.substring(0,50)}${e.sub.length>50?"...":""}</div>`:""}
+      </div>`;
+    } else {
+      const lbl=e.type==="mine"?"You":"Sam";
+      html+=`<div class="ev ${e.type}">
+        <div class="et">${lbl} · ${e.time}${e.dur?" ("+e.dur+")":""}</div>
+        <div class="en">${e.title}</div>
+        ${e.sub?`<div class="em">${e.sub}</div>`:""}
+      </div>`;
+    }
   });
-  html+=evBlock(myWorkEvents[1],"mine");
-  html+=`<div class="free"><svg width="13" height="13" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="var(--acc)" stroke-width="1.4"/><path d="M7 4v3l2 2" stroke="var(--acc)" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>Both free · 2:30–3 PM</div>`;
-  html+=evBlock(partnerWorkEvents[1],"partner");
-  html+=evBlock(myWorkEvents[2],"mine");
-  html+=evBlock(partnerWorkEvents[2],"partner");
-  html+=`<div class="free"><svg width="13" height="13" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="var(--acc)" stroke-width="1.4"/><path d="M7 4v3l2 2" stroke="var(--acc)" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>Both free from 5 PM</div>`;
+
+  const lastTime=all[all.length-1]?.time||"17:00";
+  if(lastTime<"18:00"){
+    html+=`<div class="free"><svg width="13" height="13" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="var(--acc)" stroke-width="1.4"/><path d="M7 4v3l2 2" stroke="var(--acc)" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>Both free from ${fmtTime((parseInt(lastTime.split(":")[0])+1)+":00")}</div>`;
+  }
   document.getElementById("tl-today").innerHTML=html;
 }
 
 function renderPartnerEvents(){
-  document.getElementById("partner-events").innerHTML=partnerWorkEvents.map(e=>`
-    <div style="margin:0 18px 6px">
-      <div class="ev partner" style="margin-bottom:0">
+  const k=dateKey(TODAY);
+  const ptEvs=PARTNER_WORK[k]||[];
+  document.getElementById("partner-events").innerHTML=ptEvs.map(e=>`
+    <div style="margin:0 16px 6px">
+      <div class="ev partner">
         <div class="et">${e.time} · ${e.dur}</div>
         <div class="en">${e.title}</div>
         ${e.sub?`<div class="em">${e.sub} · read only</div>`:""}
       </div>
-    </div>`).join("");
+    </div>`).join("")||`<div style="padding:16px 16px;font-size:13px;color:var(--t2)">No work events today</div>`;
 }
 
 function renderAvail(){
   document.getElementById("avail-rows").innerHTML=WDAYS.map((d,i)=>`
-    <div class="seg-row">
-      <span class="seg-lbl">${d}</span>
-      ${AVAIL[i].map(c=>`<div class="seg ${c}"></div>`).join("")}
-    </div>`).join("");
+    <div class="seg-row"><span class="seg-lbl">${d}</span>${AVAIL[i].map(c=>`<div class="seg ${c}"></div>`).join("")}</div>`).join("");
 }
 
 function renderSuggestions(){
-  const suggs=[
-    {time:"Sat 6–8pm",label:"Date night window",sub:"Both free · 2 hrs"},
-    {time:"Sun 10–12pm",label:"Brunch together",sub:"Both free · 2 hrs"},
-    {time:"Fri 5–7pm",label:"Errand run",sub:"Both free · 2 hrs"},
-  ];
-  document.getElementById("suggestions").innerHTML=suggs.map(s=>`
-    <div class="sc" onclick="quickCreate('${s.label}')">
-      <div class="st">${s.time}</div>
-      <div class="sl">${s.label}</div>
-      <div class="ss">${s.sub}</div>
-    </div>`).join("");
+  const s=[{time:"Sat 6–8pm",label:"Date night window",sub:"Both free · 2 hrs"},{time:"Sun 10–12pm",label:"Brunch together",sub:"Both free · 2 hrs"},{time:"Fri 5–7pm",label:"Errand run",sub:"Both free · 2 hrs"}];
+  document.getElementById("suggestions").innerHTML=s.map(x=>`<div class="sc" onclick="quickCreate('${x.label}')"><div class="st">${x.time}</div><div class="sl">${x.label}</div><div class="ss">${x.sub}</div></div>`).join("");
 }
 function quickCreate(label){
   document.getElementById("f-title").value=label;
@@ -636,42 +547,28 @@ function quickCreate(label){
   activeTag="date night";editingId=null;
   document.getElementById("modal-title").textContent="Quick plan";
   document.getElementById("save-btn").textContent="Save event";
-  renderTagBtns();
-  openModal("modal-create");
+  renderTagBtns();openModal("modal-create");
 }
 
 function renderTogetherTimeline(){
   let all=[];
-  myWorkEvents.forEach(e=>all.push({...e,type:"mine",sortTime:e.time}));
-  partnerWorkEvents.forEach(e=>all.push({...e,type:"partner",sortTime:e.time}));
-  sharedEvents.filter(e=>e.date==="2026-04-29").forEach(e=>all.push({time:e.time,dur:"",title:e.title,sub:e.notes,type:"shared",id:e.id,sortTime:e.time}));
-  all.sort((a,b)=>a.sortTime.localeCompare(b.sortTime));
+  const k=dateKey(TODAY);
+  (MY_WORK[k]||[]).forEach(e=>all.push({...e,type:"mine"}));
+  (PARTNER_WORK[k]||[]).forEach(e=>all.push({...e,type:"partner"}));
+  sharedEvents.filter(e=>e.date===k).forEach(e=>all.push({time:e.time,title:e.title,sub:e.notes,type:"shared",id:e.id}));
+  all.sort((a,b)=>a.time.localeCompare(b.time));
   document.getElementById("tl-together").innerHTML=all.map(e=>{
-    if(e.type==="shared"){
-      return`<div class="ev shared" onclick="openDetail(${e.id})">
-        <div class="et">Shared · ${fmtTime(e.time)}</div>
-        <div class="en">${e.title}</div>
-        ${e.sub?`<div class="em">${e.sub.substring(0,40)}</div>`:""}
-      </div>`;
-    }
-    return evBlock(e,e.type);
+    if(e.type==="shared")return`<div class="ev shared" onclick="openDetail(${e.id})"><div class="et">Shared · ${fmtTime(e.time)}</div><div class="en">${e.title}</div>${e.sub?`<div class="em">${e.sub.substring(0,40)}</div>`:""}</div>`;
+    const lbl=e.type==="mine"?"You":"Sam";
+    return`<div class="ev ${e.type}"><div class="et">${lbl} · ${e.time}</div><div class="en">${e.title}</div>${e.sub?`<div class="em">${e.sub}</div>`:""}</div>`;
   }).join("");
-}
-
-function toggleFilter(){
-  filterActive=!filterActive;
-  showToast(filterActive?"Showing shared events only":"Showing all events");
-  renderTogetherTimeline();
 }
 
 function renderEvents(){
   const sorted=[...sharedEvents].sort((a,b)=>a.date.localeCompare(b.date)||(a.time.localeCompare(b.time)));
   document.getElementById("events-list").innerHTML=sorted.map(e=>`
     <div class="ev-card" onclick="openDetail(${e.id})">
-      <div class="ev-card-top">
-        <div class="ev-card-title">${e.title}</div>
-        <span class="tag ${tagClass(e.tag)}">${e.tag}</span>
-      </div>
+      <div class="ev-card-top"><div class="ev-card-title">${e.title}</div><span class="tag ${tagClass(e.tag)}">${e.tag}</span></div>
       <div class="ev-card-time">${fmtDate(e.date)} · ${fmtTime(e.time)}</div>
       ${e.notes?`<div class="ev-card-desc">${e.notes.substring(0,60)}${e.notes.length>60?"...":""}</div>`:""}
       <div class="ev-card-footer">
@@ -689,130 +586,168 @@ function renderEvents(){
 
 function renderSettings(){
   document.getElementById("settings-wrap").innerHTML=`
-    <div class="s-sec">
-      <h3>Account</h3>
-      <div class="s-row" onclick="switchTab('link')">
-        <div class="s-lft">
-          <div class="s-ico" style="background:color-mix(in srgb,var(--p) 12%,transparent)">
-            <svg width="16" height="16" viewBox="0 0 18 18"><circle cx="9" cy="6" r="3.5" fill="none" stroke="var(--p)" stroke-width="1.4"/><path d="M2 16c0-3.3 3.1-6 7-6s7 2.7 7 6" fill="none" stroke="var(--p)" stroke-width="1.4"/></svg>
-          </div>
-          <div><div class="s-txt">Jordan Archer</div><div class="s-sub">jordan@email.com</div></div>
-        </div>
-        <div class="s-rgt">→</div>
-      </div>
-      <div class="s-row" onclick="switchTab('link')">
-        <div class="s-lft">
-          <div class="s-ico" style="background:color-mix(in srgb,var(--s) 20%,transparent)">
-            <svg width="16" height="16" viewBox="0 0 18 18"><circle cx="6" cy="6" r="3" fill="none" stroke="color-mix(in srgb,var(--s) 65%,#333)" stroke-width="1.4"/><circle cx="13" cy="6" r="2.5" fill="none" stroke="color-mix(in srgb,var(--s) 65%,#333)" stroke-width="1.3"/><path d="M1 16c0-3 2.2-5 5-5s5 2 5 5" fill="none" stroke="color-mix(in srgb,var(--s) 65%,#333)" stroke-width="1.4"/></svg>
-          </div>
-          <div><div class="s-txt">Partner link</div><div class="s-sub">Linked with Sam Archer</div></div>
-        </div>
-        <div class="s-rgt" style="color:#22c55e;font-weight:600">Active →</div>
-      </div>
+    <div class="s-sec"><h3>Account</h3>
+      <div class="s-row" onclick="switchTab('link')"><div class="s-lft"><div class="s-ico" style="background:color-mix(in srgb,var(--p) 12%,transparent)"><svg width="16" height="16" viewBox="0 0 18 18"><circle cx="9" cy="6" r="3.5" fill="none" stroke="var(--p)" stroke-width="1.4"/><path d="M2 16c0-3.3 3.1-6 7-6s7 2.7 7 6" fill="none" stroke="var(--p)" stroke-width="1.4"/></svg></div><div><div class="s-txt">Jordan Archer</div><div class="s-sub">jordan@email.com</div></div></div><div class="s-rgt">→</div></div>
+      <div class="s-row" onclick="switchTab('link')"><div class="s-lft"><div class="s-ico" style="background:color-mix(in srgb,var(--s) 20%,transparent)"><svg width="16" height="16" viewBox="0 0 18 18"><circle cx="6" cy="6" r="3" fill="none" stroke="color-mix(in srgb,var(--s) 65%,#333)" stroke-width="1.4"/><circle cx="13" cy="6" r="2.5" fill="none" stroke="color-mix(in srgb,var(--s) 65%,#333)" stroke-width="1.3"/><path d="M1 16c0-3 2.2-5 5-5s5 2 5 5" fill="none" stroke="color-mix(in srgb,var(--s) 65%,#333)" stroke-width="1.4"/></svg></div><div><div class="s-txt">Partner link</div><div class="s-sub">Linked with Sam Archer</div></div></div><div class="s-rgt" style="color:#22c55e;font-weight:600">Active →</div></div>
     </div>
-    <div class="s-sec">
-      <h3>Calendar sync</h3>
-      <div class="s-row" onclick="showToast('Google Calendar connected')">
-        <div class="s-lft">
-          <div class="s-ico" style="background:#e8f0fe;font-size:13px;font-weight:700;color:#4285F4">G</div>
-          <div><div class="s-txt">Google Calendar</div><div class="s-sub">jordan@gmail.com</div></div>
-        </div>
-        <div class="s-rgt" style="color:#22c55e">Synced</div>
-      </div>
-      <div class="s-row" onclick="showToast('Connect your Outlook account in the full app')">
-        <div class="s-lft">
-          <div class="s-ico" style="background:#e8f4fd;font-size:11px;font-weight:700;color:#0078D4">OL</div>
-          <div><div class="s-txt">Outlook</div><div class="s-sub">Not connected</div></div>
-        </div>
-        <div class="s-rgt" style="color:var(--acc)">Connect →</div>
-      </div>
-      <div class="s-row" onclick="showToast('Apple Calendar requires device permissions')">
-        <div class="s-lft">
-          <div class="s-ico" style="background:#f0f0f0;font-size:13px">
-            <svg width="16" height="16" viewBox="0 0 18 18"><rect x="2" y="3" width="14" height="13" rx="2" fill="none" stroke="#555" stroke-width="1.3"/><path d="M6 1v3M12 1v3M2 7h14" stroke="#555" stroke-width="1.3" stroke-linecap="round"/></svg>
-          </div>
-          <div><div class="s-txt">Apple Calendar</div><div class="s-sub">Not connected</div></div>
-        </div>
-        <div class="s-rgt" style="color:var(--acc)">Connect →</div>
-      </div>
+    <div class="s-sec"><h3>Calendar sync</h3>
+      <div class="s-row" onclick="showToast('Google Calendar connected')"><div class="s-lft"><div class="s-ico" style="background:#e8f0fe;font-size:13px;font-weight:700;color:#4285F4">G</div><div><div class="s-txt">Google Calendar</div><div class="s-sub">jordan@gmail.com</div></div></div><div class="s-rgt" style="color:#22c55e">Synced</div></div>
+      <div class="s-row" onclick="showToast('Connect Outlook in the full app')"><div class="s-lft"><div class="s-ico" style="background:#e8f4fd;font-size:11px;font-weight:700;color:#0078D4">OL</div><div><div class="s-txt">Outlook</div><div class="s-sub">Not connected</div></div></div><div class="s-rgt" style="color:var(--acc)">Connect →</div></div>
+      <div class="s-row" onclick="showToast('Apple Calendar requires device permissions')"><div class="s-lft"><div class="s-ico" style="background:#f0f0f0"><svg width="15" height="15" viewBox="0 0 16 16"><rect x="1" y="2" width="14" height="13" rx="2" fill="none" stroke="#555" stroke-width="1.3"/><path d="M5 1v3M11 1v3M1 6h14" stroke="#555" stroke-width="1.3" stroke-linecap="round"/></svg></div><div><div class="s-txt">Apple Calendar</div><div class="s-sub">Not connected</div></div></div><div class="s-rgt" style="color:var(--acc)">Connect →</div></div>
     </div>
-    <div class="s-sec">
-      <h3>Notifications</h3>
+    <div class="s-sec"><h3>Notifications</h3>
       ${["reminders","dailySummary","partnerUpdates","smartSuggest"].map((k,i)=>{
-        const labels=["Event reminders","Daily summary","Partner updates","Smart suggestions"];
-        const subs=["30 min before events","Every morning at 7:30 AM","When Sam edits events","Date night & errand ideas"];
-        return`<div class="s-row">
-          <div class="s-lft">
-            <div class="s-ico" style="background:color-mix(in srgb,var(--acc) 10%,transparent)">
-              <svg width="15" height="15" viewBox="0 0 16 16"><path d="M8 1a5 5 0 015 5v3l1.5 2H1.5L3 9V6a5 5 0 015-5z" fill="none" stroke="var(--acc)" stroke-width="1.3"/><path d="M6.5 14a1.5 1.5 0 003 0" fill="none" stroke="var(--acc)" stroke-width="1.3"/></svg>
-            </div>
-            <div><div class="s-txt">${labels[i]}</div><div class="s-sub">${subs[i]}</div></div>
-          </div>
-          <button class="toggle${settings[k]?" on":""}" onclick="toggleSetting('${k}',this)"></button>
-        </div>`;
+        const L=["Event reminders","Daily summary","Partner updates","Smart suggestions"];
+        const S=["30 min before events","Every morning at 7:30 AM","When Sam edits events","Date night & errand ideas"];
+        return`<div class="s-row"><div class="s-lft"><div class="s-ico" style="background:color-mix(in srgb,var(--acc) 10%,transparent)"><svg width="15" height="15" viewBox="0 0 16 16"><path d="M8 1a5 5 0 015 5v3l1.5 2H1.5L3 9V6a5 5 0 015-5z" fill="none" stroke="var(--acc)" stroke-width="1.3"/><path d="M6.5 14a1.5 1.5 0 003 0" fill="none" stroke="var(--acc)" stroke-width="1.3"/></svg></div><div><div class="s-txt">${L[i]}</div><div class="s-sub">${S[i]}</div></div></div><button class="toggle${settings[k]?" on":""}" onclick="toggleSetting('${k}',this)"></button></div>`;
       }).join("")}
     </div>
-    <div class="s-sec">
-      <h3>Appearance</h3>
+    <div class="s-sec"><h3>Appearance</h3>
       <div style="background:var(--sur);border-radius:12px;border:.5px solid var(--color-border-tertiary);padding:13px">
         <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:9px">Theme</div>
         <div class="theme-grid">
-          ${Object.entries(THEMES).map(([k,t])=>`
-            <div class="tc${k===activeTheme?" on":""}" onclick="applyTheme('${k}')" style="background:${t.bg};border-color:${k===activeTheme?t.p:"transparent"}">
-              <div class="tsw">${t.sw.map(c=>`<div class="sw" style="background:${c}"></div>`).join("")}</div>
-              <div class="tn" style="color:${t.t1}">${t.name}</div>
-              <div class="ts" style="color:${t.t2}">${t.sub}</div>
-              ${k===activeTheme?`<div style="position:absolute;top:6px;right:6px;width:14px;height:14px;border-radius:50%;background:${t.p};display:flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><polyline points="1.5,4 3.5,6.5 6.5,2" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>`:""}
-            </div>`).join("")}
+          ${Object.entries(THEMES).map(([k,t])=>`<div class="tc${k===activeTheme?" on":""}" onclick="applyTheme('${k}')" style="background:${t.bg};border-color:${k===activeTheme?t.p:"transparent"}">
+            <div class="tsw">${t.sw.map(c=>`<div class="sw" style="background:${c}"></div>`).join("")}</div>
+            <div class="tn" style="color:${t.t1}">${t.name}</div><div class="ts" style="color:${t.t2}">${t.sub}</div>
+            ${k===activeTheme?`<div style="position:absolute;top:6px;right:6px;width:14px;height:14px;border-radius:50%;background:${t.p};display:flex;align-items:center;justify-content:center"><svg width="8" height="8" viewBox="0 0 8 8"><polyline points="1.5,4 3.5,6.5 6.5,2" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>`:""}</div>`).join("")}
         </div>
       </div>
     </div>
-    <div class="s-sec">
-      <h3>Sync</h3>
-      <div class="s-row" onclick="triggerSync()">
-        <div class="s-lft">
-          <div class="s-ico" style="background:color-mix(in srgb,var(--acc) 12%,transparent)">
-            <svg width="16" height="16" viewBox="0 0 18 18"><path d="M3 9a6 6 0 016-6 6 6 0 014.2 1.8L15 3v5h-5l1.8-1.8A4 4 0 009 5a4 4 0 00-4 4" fill="none" stroke="var(--acc)" stroke-width="1.4" stroke-linecap="round"/><path d="M15 9a6 6 0 01-6 6 6 6 0 01-4.2-1.8L3 15v-5h5l-1.8 1.8A4 4 0 009 13a4 4 0 004-4" fill="none" stroke="var(--acc)" stroke-width="1.4" stroke-linecap="round"/></svg>
-          </div>
-          <div><div class="s-txt">Sync now</div><div class="s-sub">Push all events to Sam's device</div></div>
-        </div>
-        <div class="s-rgt" style="color:var(--acc)">Sync →</div>
-      </div>
-    </div>
-  `;
-}
-
-function toggleSetting(k,btn){
-  settings[k]=!settings[k];
-  btn.classList.toggle("on",settings[k]);
-  showToast(k+" "+(settings[k]?"enabled":"disabled"));
+    <div class="s-sec"><h3>Sync</h3>
+      <div class="s-row" onclick="triggerSync()"><div class="s-lft"><div class="s-ico" style="background:color-mix(in srgb,var(--acc) 12%,transparent)"><svg width="16" height="16" viewBox="0 0 18 18"><path d="M3 9a6 6 0 016-6 6 6 0 014.2 1.8L15 3v5h-5l1.8-1.8A4 4 0 009 5a4 4 0 00-4 4" fill="none" stroke="var(--acc)" stroke-width="1.4" stroke-linecap="round"/><path d="M15 9a6 6 0 01-6 6 6 6 0 01-4.2-1.8L3 15v-5h5l-1.8 1.8A4 4 0 009 13a4 4 0 004-4" fill="none" stroke="var(--acc)" stroke-width="1.4" stroke-linecap="round"/></svg></div><div><div class="s-txt">Sync now</div><div class="s-sub">Push all events to Sam's device</div></div></div><div class="s-rgt" style="color:var(--acc)">Sync →</div></div>
+    </div>`;
 }
 
 function renderNotifs(){
-  if(notifs.length===0){
-    document.getElementById("notif-list").innerHTML=`<div style="padding:32px 18px;text-align:center;font-size:13px;color:var(--t2)">No notifications yet</div>`;
-    return;
-  }
-  document.getElementById("notif-list").innerHTML=notifs.map(n=>`
-    <div class="notif-item">
-      <div class="notif-dot" style="background:var(--acc)"></div>
-      <div>
-        <div class="notif-txt">${n.msg}</div>
-        <div class="notif-time">${n.time}</div>
-      </div>
-    </div>`).join("");
+  document.getElementById("notif-list").innerHTML=notifs.length?notifs.map(n=>`<div class="notif-item"><div style="width:8px;height:8px;border-radius:50%;background:var(--acc);margin-top:4px;flex-shrink:0"></div><div><div style="font-size:13px;color:var(--t1)">${n.msg}</div><div style="font-size:11px;color:var(--t2);margin-top:2px">${n.time}</div></div></div>`).join(""):`<div style="padding:32px 16px;text-align:center;font-size:13px;color:var(--t2)">No notifications yet</div>`;
 }
 function clearNotifs(){notifs=[];renderNotifs();showToast("Notifications cleared");}
+function addNotif(msg){notifs.unshift({msg,time:"Just now"});renderNotifs();}
 
-function copyCode(){
-  showToast("Code JA-8472 copied!");
-  addNotif("Partner link code copied to clipboard");
+function openModal(id){document.getElementById(id).classList.add("open");}
+function closeModal(id){document.getElementById(id).classList.remove("open");if(id==="modal-create")editingId=null;}
+
+function openCreate(){
+  editingId=null;
+  document.getElementById("modal-title").textContent="New shared event";
+  document.getElementById("save-btn").textContent="Save event";
+  document.getElementById("f-title").value="";
+  document.getElementById("f-date").value=dateKey(selectedDate);
+  document.getElementById("f-time").value="19:00";
+  document.getElementById("f-notes").value="";
+  activeTag="date night";renderTagBtns();openModal("modal-create");
 }
+function openEdit(id){
+  const ev=sharedEvents.find(e=>e.id===id);if(!ev)return;
+  editingId=id;
+  document.getElementById("modal-title").textContent="Edit event";
+  document.getElementById("save-btn").textContent="Update event";
+  document.getElementById("f-title").value=ev.title;
+  document.getElementById("f-date").value=ev.date;
+  document.getElementById("f-time").value=ev.time;
+  document.getElementById("f-notes").value=ev.notes||"";
+  activeTag=ev.tag||"date night";renderTagBtns();closeModal("modal-detail");openModal("modal-create");
+}
+function openDelete(id){
+  const ev=sharedEvents.find(e=>e.id===id);if(!ev)return;
+  deleteId=id;
+  document.getElementById("del-sub").textContent='"'+ev.title+'" will be removed for both you and Sam.';
+  closeModal("modal-detail");openModal("modal-delete");
+}
+function confirmDelete(){
+  const ev=sharedEvents.find(e=>e.id===deleteId);
+  if(ev)addNotif("Deleted: "+ev.title);
+  sharedEvents=sharedEvents.filter(e=>e.id!==deleteId);
+  deleteId=null;closeModal("modal-delete");
+  renderEvents();renderTodayTimeline();renderTogetherTimeline();renderWeek();
+  showToast("Event deleted");
+}
+function saveEvent(){
+  const title=document.getElementById("f-title").value.trim()||"Untitled event";
+  const date=document.getElementById("f-date").value||dateKey(selectedDate);
+  const time=document.getElementById("f-time").value||"19:00";
+  const notes=document.getElementById("f-notes").value.trim();
+  if(editingId){
+    const idx=sharedEvents.findIndex(e=>e.id===editingId);
+    if(idx>=0)sharedEvents[idx]={id:editingId,title,tag:activeTag,date,time,notes};
+    addNotif("Updated: "+title);showToast("Event updated");
+  } else {
+    sharedEvents.push({id:nextId++,title,tag:activeTag,date,time,notes});
+    addNotif("Created: "+title);showToast("Event saved");
+  }
+  closeModal("modal-create");
+  renderEvents();renderTodayTimeline();renderTogetherTimeline();renderWeek();
+  setTimeout(()=>triggerSync(),800);
+}
+function openDetail(id){
+  const ev=sharedEvents.find(e=>e.id===id);if(!ev)return;
+  document.getElementById("detail-sheet").innerHTML=`<div class="hdl"></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+      <div style="font-size:17px;font-weight:600;color:var(--t1);flex:1;margin-right:10px">${ev.title}</div>
+      <span class="tag ${tagClass(ev.tag)}">${ev.tag}</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px"><svg width="15" height="15" viewBox="0 0 16 16" style="flex-shrink:0"><rect x="1" y="3" width="14" height="12" rx="2" fill="none" stroke="var(--t2)" stroke-width="1.3"/><path d="M5 1v3M11 1v3M1 7h14" stroke="var(--t2)" stroke-width="1.3" stroke-linecap="round"/></svg><span style="font-size:13px;color:var(--t2)">${fmtDate(ev.date)}</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><svg width="15" height="15" viewBox="0 0 16 16" style="flex-shrink:0"><circle cx="8" cy="8" r="6.5" fill="none" stroke="var(--t2)" stroke-width="1.3"/><path d="M8 4.5V8l2.5 2" stroke="var(--t2)" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg><span style="font-size:13px;color:var(--t2)">${fmtTime(ev.time)}</span></div>
+      ${ev.notes?`<div style="display:flex;align-items:flex-start;gap:10px"><svg width="15" height="15" viewBox="0 0 16 16" style="flex-shrink:0;margin-top:1px"><rect x="2" y="2" width="12" height="12" rx="2" fill="none" stroke="var(--t2)" stroke-width="1.3"/><path d="M5 6h6M5 9h4" stroke="var(--t2)" stroke-width="1.3" stroke-linecap="round"/></svg><span style="font-size:13px;color:var(--t2);line-height:1.4">${ev.notes}</span></div>`:""}
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px">
+      <div class="mav" style="background:color-mix(in srgb,var(--p) 15%,transparent);color:var(--p)">JA</div>
+      <div class="mav" style="background:color-mix(in srgb,var(--s) 25%,transparent);color:color-mix(in srgb,var(--s) 65%,#333);margin-left:-4px">SA</div>
+      <span style="font-size:11px;color:var(--t2);margin-left:4px">Jordan & Sam · shared</span>
+    </div>
+    <button class="btn-primary" onclick="openEdit(${ev.id})">Edit event</button>
+    <button class="btn-ghost" style="color:var(--danger);margin-top:4px" onclick="openDelete(${ev.id})">Delete event</button>
+    <button class="btn-ghost" onclick="closeModal('modal-detail')">Close</button>`;
+  openModal("modal-detail");
+}
+
+function renderTagBtns(){
+  document.getElementById("tag-btns").innerHTML=TAGS.map(t=>`<button class="tbtn${t===activeTag?" on":""}" onclick="setTag('${t}')">${t}</button>`).join("");
+}
+function setTag(t){activeTag=t;renderTagBtns();}
+
+function applyTheme(k){
+  activeTheme=k;const t=THEMES[k];
+  const a=document.getElementById("app").style;
+  a.setProperty("--p",t.p);a.setProperty("--s",t.s);a.setProperty("--bg",t.bg);a.setProperty("--sur",t.sur);
+  a.setProperty("--t1",t.t1);a.setProperty("--t2",t.t2);a.setProperty("--acc",t.acc);
+  renderSettings();renderWeek();showToast("Theme: "+t.name);
+}
+function toggleSetting(k,btn){settings[k]=!settings[k];btn.classList.toggle("on",settings[k]);showToast(k+" "+(settings[k]?"on":"off"));}
+
+function triggerSync(){
+  document.getElementById("sync-dot").classList.add("syncing");
+  document.getElementById("sync-lbl").textContent="Syncing...";
+  document.getElementById("sync-bar").style.width="0";
+  document.getElementById("sync-modal-ttl").textContent="Syncing with Sam...";
+  document.getElementById("sync-modal-sub").textContent="Pushing "+sharedEvents.length+" events";
+  openModal("modal-sync");
+  let pct=0;
+  const iv=setInterval(()=>{
+    pct=Math.min(100,pct+Math.round(Math.random()*18+8));
+    document.getElementById("sync-bar").style.width=pct+"%";
+    if(pct>=100){
+      clearInterval(iv);
+      document.getElementById("sync-modal-ttl").textContent="All synced!";
+      document.getElementById("sync-modal-sub").textContent=sharedEvents.length+" events up to date";
+      document.getElementById("sync-dot").classList.remove("syncing");
+      document.getElementById("sync-lbl").textContent="Synced";
+      addNotif("Sync complete — "+sharedEvents.length+" events synced with Sam");
+    }
+  },220);
+}
+
+function showToast(msg,dur=2200){
+  const el=document.getElementById("toast");
+  el.textContent=msg;el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"),dur);
+}
+function copyCode(){showToast("Code JA-8472 copied!");addNotif("Partner link code copied");}
 function linkPartner(){
-  const code=document.getElementById("partner-code-input").value.trim();
-  if(!code){showToast("Enter a partner code");return;}
-  showToast("Link request sent to "+code+"!");
-  addNotif("Partner link request sent for code: "+code);
+  const c=document.getElementById("partner-code-input").value.trim();
+  if(!c){showToast("Enter a partner code");return;}
+  showToast("Request sent to "+c+"!");addNotif("Partner link request sent for: "+c);
   document.getElementById("partner-code-input").value="";
 }
 
@@ -822,44 +757,35 @@ const TABS=[
   {id:"together",label:"Together",icon:`<svg width="18" height="18" viewBox="0 0 20 20"><path d="M10 17s-7-4.2-7-8.5C3 5.9 5.1 4 7.5 4c1.4 0 2.5.7 2.5 1.5C10 4.7 11.1 4 12.5 4 14.9 4 17 5.9 17 8.5 17 12.8 10 17 10 17z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`},
   {id:"events",label:"Events",icon:`<svg width="18" height="18" viewBox="0 0 20 20"><path d="M4 6h12M4 10h8M4 14h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`},
   {id:"settings",label:"Settings",icon:`<svg width="18" height="18" viewBox="0 0 20 20"><circle cx="10" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.6 4.6l1.4 1.4M14 14l1.4 1.4M4.6 15.4l1.4-1.4M14 6l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`},
+  {id:"notifications",label:"Alerts",icon:`<svg width="18" height="18" viewBox="0 0 20 20"><path d="M10 2a6 6 0 016 6v4l1.5 2h-15L4 12V8a6 6 0 016-6z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 16a2 2 0 004 0" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`},
 ];
 
 function switchTab(id){
   activeTab=id;
-  const screens=["today","partner","together","events","settings","link","notifications"];
-  screens.forEach(s=>{
+  ["today","partner","together","events","settings","link","notifications"].forEach(s=>{
     const el=document.getElementById("screen-"+s);
     if(el)el.classList.toggle("active",s===id);
   });
-  const fabRow=document.getElementById("fab-row");
-  fabRow.style.display=(id==="events"||id==="today")?"flex":"none";
-  const hdrSubs={today:"Wednesday, April 29",partner:"Sam's schedule",together:"Your shared view",events:"Shared events",settings:"Preferences",link:"Partner connection",notifications:"Recent activity"};
-  document.getElementById("hdr-sub").textContent=hdrSubs[id]||"";
+  const subs={today:"Wednesday, April 29",partner:"Sam's schedule",together:"Your shared view",events:"Shared events",settings:"Preferences",link:"Partner connection",notifications:"Recent activity"};
+  document.getElementById("hdr-sub").textContent=subs[id]||"";
   if(id==="notifications")renderNotifs();
+  if(id==="settings")renderSettings();
   renderNav();
 }
 
 function renderNav(){
   document.getElementById("bnav").innerHTML=TABS.map(t=>`
     <div class="nb${t.id===activeTab?" on":""}" onclick="switchTab('${t.id}')">
-      <div class="ni">${t.icon}</div>
-      <span class="nl">${t.label}</span>
-    </div>`).join("")+`
-    <div class="nb${activeTab==="notifications"?" on":""}" onclick="switchTab('notifications')">
-      <div class="ni"><svg width="18" height="18" viewBox="0 0 20 20"><path d="M10 2a6 6 0 016 6v4l1.5 2h-15L4 12V8a6 6 0 016-6z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 16a2 2 0 004 0" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
-      <span class="nl">Alerts</span>
-    </div>`;
+      <div class="ni">${t.icon}</div><span class="nl">${t.label}</span>
+    </div>`).join("");
 }
 
 function updateClock(){
-  const now=new Date();
-  const h=now.getHours(),m=String(now.getMinutes()).padStart(2,"0");
+  const n=new Date(),h=n.getHours(),m=String(n.getMinutes()).padStart(2,"0");
   document.getElementById("clock").textContent=h+":"+m;
 }
 
-renderStrip();renderTodayTimeline();renderPartnerEvents();renderAvail();
+renderWeek();renderTodayTimeline();renderPartnerEvents();renderAvail();
 renderSuggestions();renderTogetherTimeline();renderEvents();renderSettings();renderNav();renderNotifs();
 updateClock();setInterval(updateClock,30000);
-addNotif("Sam added a new event: Team dinner · Fri May 3");
-addNotif("Sync complete — 4 events synced with Sam");
 </script>
