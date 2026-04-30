@@ -1,0 +1,85 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User account information and app settings.",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "pairingCode": { "type": "string", "description": "Unique code for linking with a partner." },
+        "partnerUid": { "type": "string", "description": "UID of the linked partner." },
+        "theme": { "type": "string" },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "reminders": { "type": "boolean" },
+            "dailySummary": { "type": "boolean" },
+            "partnerUpdates": { "type": "boolean" },
+            "smartSuggest": { "type": "boolean" }
+          }
+        }
+      },
+      "required": ["displayName", "email", "pairingCode"]
+    },
+    "Pairing": {
+      "title": "Partner Pairing",
+      "description": "Represents the link between two users.",
+      "type": "object",
+      "properties": {
+        "uids": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uids"]
+    },
+    "SharedEvent": {
+      "title": "Shared Event",
+      "description": "An event shared between partners.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "tag": { "type": "string" },
+        "date": { "type": "string", "description": "YYYY-MM-DD" },
+        "time": { "type": "string", "description": "HH:mm" },
+        "notes": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "date", "time", "createdBy"]
+    },
+    "WorkEvent": {
+      "title": "Work Event",
+      "description": "Individual work schedule item.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "sub": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "dur": { "type": "string" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["title", "date", "time", "ownerId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Standard user profile data."
+    },
+    "/pairings/{pairingId}": {
+      "schema": "Pairing",
+      "description": "Metadata for a paired couple."
+    },
+    "/pairings/{pairingId}/events/{eventId}": {
+      "schema": "SharedEvent",
+      "description": "Shared calendar events for a specific pairing."
+    },
+    "/users/{userId}/work_events/{eventId}": {
+      "schema": "WorkEvent",
+      "description": "Private work events for a user, viewable by partner."
+    }
+  }
+}

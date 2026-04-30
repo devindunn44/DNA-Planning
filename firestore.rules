@@ -1,0 +1,95 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Phase 3: Primitives
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    
+    // Member check for pairings
+    function isMemberOfPairing(pairingId) {
+      let pairing = get(/databases/$(database)/documents/pairings/$(pairingId)).data;
+      return isSignedIn() && request.auth.uid in pairing.uids;
+    }
+
+    // 1. Users
+    match /users/{userId} {
+      function isValidUser(data) {
+        return data.keys().hasAll(['displayName', 'email', 'pairingCode']) &&
+               data.displayName is string && data.displayName.size() <= 50 &&
+               data.email is string && data.email.size() <= 100 &&
+               data.pairingCode is string && data.pairingCode.size() <= 10 &&
+               (!data.keys().hasAny(['partnerUid']) || (data.partnerUid is string && isValidId(data.partnerUid))) &&
+               (!data.keys().hasAny(['theme']) || (data.theme is string && data.theme.size() <= 20));
+      }
+
+      allow get: if isSignedIn(); // Allow get for linking lookup
+      allow list: if false; // No blanket listing
+      allow create: if isOwner(userId) && isValidUser(incoming());
+      allow update: if isOwner(userId) && isValidUser(incoming()) && (
+        incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'partnerUid', 'theme', 'settings'])
+      );
+    }
+
+    // 2. Pairings
+    match /pairings/{pairingId} {
+      function isValidPairing(data) {
+        return data.keys().hasAll(['uids', 'createdAt']) &&
+               data.uids is list && data.uids.size() == 2 &&
+               request.auth.uid in data.uids &&
+               data.createdAt == request.time;
+      }
+
+      allow get: if isSignedIn() && request.auth.uid in existing().uids;
+      allow create: if isSignedIn() && isValidPairing(incoming());
+      allow delete: if false; // Pairings are semi-permanent for now
+    }
+
+    // 3. Shared Events
+    match /pairings/{pairingId}/events/{eventId} {
+      function isValidSharedEvent(data) {
+        return data.keys().hasAll(['title', 'date', 'time', 'tag', 'createdBy', 'createdAt', 'updatedAt']) &&
+               data.title is string && data.title.size() <= 100 &&
+               data.date is string && data.date.matches('^\\d{4}-\\d{2}-\\d{2}$') &&
+               data.time is string && data.time.matches('^\\d{2}:\\d{2}$') &&
+               data.tag is string && data.tag.size() <= 30 &&
+               data.createdBy == request.auth.uid &&
+               data.createdAt <= request.time &&
+               data.updatedAt == request.time;
+      }
+
+      allow list, get: if isMemberOfPairing(pairingId);
+      allow create: if isMemberOfPairing(pairingId) && isValidSharedEvent(incoming());
+      allow update: if isMemberOfPairing(pairingId) && isValidSharedEvent(incoming()) && (
+        incoming().diff(existing()).affectedKeys().hasOnly(['title', 'date', 'time', 'tag', 'notes', 'updatedAt'])
+      );
+      allow delete: if isMemberOfPairing(pairingId);
+    }
+
+    // 4. Work Events
+    match /users/{userId}/work_events/{eventId} {
+      function isValidWorkEvent(data) {
+        return data.keys().hasAll(['title', 'date', 'time', 'ownerId']) &&
+               data.title is string && data.title.size() <= 100 &&
+               data.ownerId == userId;
+      }
+
+      function isPartner(uid) {
+        let profile = get(/databases/$(database)/documents/users/$(uid)).data;
+        return isSignedIn() && profile.partnerUid == request.auth.uid;
+      }
+
+      allow list, get: if isOwner(userId) || isPartner(userId);
+      allow create: if isOwner(userId) && isValidWorkEvent(incoming());
+      allow update: if isOwner(userId) && isValidWorkEvent(incoming());
+      allow delete: if isOwner(userId);
+    }
+  }
+}
